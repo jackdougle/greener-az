@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink, Clock, Wifi } from 'lucide-react';
 import { DataSourcesProps } from '@/types';
 
-export default function DataSources({ sources, lastUpdated, isRealTime = false }: DataSourcesProps) {
+export default function DataSources({ sources, lastUpdated, isRealTime = false, isUsingFallback = false }: DataSourcesProps) {
   const sourceLinks: Record<string, string> = {
     "U.S. Energy Information Administration (EIA) - 2024 Data": "https://www.eia.gov/electricity/state/arizona/",
     "Arizona Corporation Commission - Rate Filings 2024": "https://www.azcc.gov/",
@@ -24,12 +24,17 @@ export default function DataSources({ sources, lastUpdated, isRealTime = false }
             <ExternalLink className="w-5 h-5 text-blue-600" />
             <span>Data Sources</span>
           </div>
-          {isRealTime && (
+          {isRealTime && !isUsingFallback ? (
             <div className="flex items-center space-x-2 text-sm text-green-600">
               <Wifi className="w-4 h-4" />
               <span>Live Data</span>
             </div>
-          )}
+          ) : isUsingFallback ? (
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <Wifi className="w-4 h-4" />
+              <span>Fallback Data</span>
+            </div>
+          ) : null}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -62,15 +67,20 @@ export default function DataSources({ sources, lastUpdated, isRealTime = false }
             <div className="flex items-center space-x-2">
               <Clock className="w-4 h-4 text-blue-600" />
               <p className="text-xs text-blue-800">
-                {isRealTime ? 'Real-time updates' : 'Last updated'}: {lastUpdated || new Date().toLocaleString()}
+                {isRealTime && !isUsingFallback ? 'Real-time updates' : isUsingFallback ? 'Using fallback data' : 'Last updated'}: {lastUpdated || new Date().toLocaleString()}
               </p>
             </div>
-            {isRealTime && (
+            {isRealTime && !isUsingFallback ? (
               <div className="flex items-center space-x-1">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-xs text-green-700">Connected</span>
               </div>
-            )}
+            ) : isUsingFallback ? (
+              <div className="flex items-center space-x-1">
+                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                <span className="text-xs text-gray-600">Static Data</span>
+              </div>
+            ) : null}
           </div>
         </div>
       </CardContent>

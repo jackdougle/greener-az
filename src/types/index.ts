@@ -96,6 +96,7 @@ export interface DataSourcesProps {
   sources?: string[];
   lastUpdated?: string;
   isRealTime?: boolean;
+  isUsingFallback?: boolean;
 }
 
 // Service types

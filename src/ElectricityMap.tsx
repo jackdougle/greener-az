@@ -35,6 +35,7 @@ export default function ElectricityMap() {
   const [mapStyle, setMapStyle] = useState<MapStyleType>('consumption');
   const [showPanel, setShowPanel] = useState<boolean>(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [isUsingFallback, setIsUsingFallback] = useState<boolean>(false);
   const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
 
   useEffect(() => {
@@ -363,12 +364,15 @@ export default function ElectricityMap() {
 
       if (!response.counties || response.counties.length === 0) {
         setMapData(getFallbackArizonaData());
+        setIsUsingFallback(true);
       } else {
         setMapData(response);
+        setIsUsingFallback(false);
       }
     } catch (error) {
       console.error('Error loading electricity data:', error);
       setMapData(getFallbackArizonaData());
+      setIsUsingFallback(true);
     }
     setLoading(false);
   };
@@ -446,13 +450,18 @@ export default function ElectricityMap() {
             <div className="flex items-center space-x-4">
               {/* Real-time Status Indicator */}
               <div className="flex items-center space-x-2">
-                {isRealTimeConnected ? (
+                {isRealTimeConnected && !isUsingFallback ? (
                   <>
                     <Wifi className="w-4 h-4 text-green-600" />
                     <div className="flex items-center space-x-1">
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       <span className="text-sm text-green-700 font-medium">Live</span>
                     </div>
+                  </>
+                ) : isUsingFallback ? (
+                  <>
+                    <WifiOff className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm text-amber-600">Fallback</span>
                   </>
                 ) : (
                   <>
@@ -586,6 +595,7 @@ export default function ElectricityMap() {
           sources={mapData?.data_sources}
           lastUpdated={lastUpdated || undefined}
           isRealTime={isRealTimeConnected}
+          isUsingFallback={isUsingFallback}
         />
       </div>
     </div>

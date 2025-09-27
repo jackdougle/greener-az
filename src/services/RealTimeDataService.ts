@@ -4,7 +4,15 @@ import { RealTimeData, ConnectionStatus, UseRealTimeDataReturn } from '@/types';
 class RealTimeDataService {
   private subscribers: Array<(data: RealTimeData) => void> = [];
   private isConnected: boolean = false;
+  private isOnline: boolean = navigator.onLine;
   private updateInterval: NodeJS.Timeout | null = null;
+  private connectionStatusSubscribers: Array<(isConnected: boolean) => void> = [];
+
+  constructor() {
+    // Listen for online/offline events
+    window.addEventListener('online', this.handleOnline.bind(this));
+    window.addEventListener('offline', this.handleOffline.bind(this));
+  }
 
   subscribe(callback: (data: RealTimeData) => void): () => void {
     this.subscribers.push(callback);
@@ -13,17 +21,57 @@ class RealTimeDataService {
     };
   }
 
+  subscribeToConnectionStatus(callback: (isConnected: boolean) => void): () => void {
+    this.connectionStatusSubscribers.push(callback);
+    return () => {
+      this.connectionStatusSubscribers = this.connectionStatusSubscribers.filter(sub => sub !== callback);
+    };
+  }
+
+  private handleOnline(): void {
+    this.isOnline = true;
+    console.log('🟢 Network connection restored');
+    if (this.isConnected) {
+      this.notifyConnectionStatusSubscribers();
+      this.fetchAndBroadcastUpdates();
+    }
+  }
+
+  private handleOffline(): void {
+    this.isOnline = false;
+    console.log('🔴 Network connection lost');
+    this.notifyConnectionStatusSubscribers();
+  }
+
+  private notifyConnectionStatusSubscribers(): void {
+    const actuallyConnected = this.isConnected && this.isOnline;
+    this.connectionStatusSubscribers.forEach(callback => {
+      try {
+        callback(actuallyConnected);
+      } catch (error) {
+        console.error('Error in connection status subscriber callback:', error);
+      }
+    });
+  }
+
   async connect(): Promise<void> {
     this.isConnected = true;
     console.log('🔴 Real-time service connected');
 
-    // Start periodic updates every 30 seconds
+    // Notify connection status subscribers
+    this.notifyConnectionStatusSubscribers();
+
+    // Start periodic updates every 30 seconds (only if online)
     this.updateInterval = setInterval(() => {
-      this.fetchAndBroadcastUpdates();
+      if (this.isOnline) {
+        this.fetchAndBroadcastUpdates();
+      }
     }, 30000);
 
-    // Initial fetch
-    await this.fetchAndBroadcastUpdates();
+    // Initial fetch (only if online)
+    if (this.isOnline) {
+      await this.fetchAndBroadcastUpdates();
+    }
   }
 
   disconnect(): void {
@@ -32,6 +80,7 @@ class RealTimeDataService {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
     }
+    this.notifyConnectionStatusSubscribers();
     console.log('🟡 Real-time service disconnected');
   }
 
@@ -123,7 +172,7 @@ class RealTimeDataService {
 
   getConnectionStatus(): ConnectionStatus {
     return {
-      isConnected: this.isConnected,
+      isConnected: this.isConnected && this.isOnline,
       subscriberCount: this.subscribers.length,
       lastUpdate: new Date().toISOString()
     };
@@ -139,16 +188,22 @@ export function useRealTimeData(): UseRealTimeDataReturn {
   const [isConnected, setIsConnected] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const unsubscribe = realTimeDataService.subscribe((updates) => {
+    const unsubscribeData = realTimeDataService.subscribe((updates) => {
       setData(updates);
     });
 
+    const unsubscribeConnection = realTimeDataService.subscribeToConnectionStatus((connected) => {
+      setIsConnected(connected);
+    });
+
     realTimeDataService.connect().then(() => {
-      setIsConnected(true);
+      // Initial connection status will be handled by the subscription
+      setIsConnected(realTimeDataService.getConnectionStatus().isConnected);
     });
 
     return () => {
-      unsubscribe();
+      unsubscribeData();
+      unsubscribeConnection();
       realTimeDataService.disconnect();
       setIsConnected(false);
     };
