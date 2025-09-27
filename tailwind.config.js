@@ -2,9 +2,9 @@
 export default {
   darkMode: ["class"],
   content: [
-    './Pages/**/*.{js,jsx}',
-    './Components/**/*.{js,jsx}',
-    './src/**/*.{js,jsx}',
+    './Pages/**/*.{js,jsx,ts,tsx}',
+    './Components/**/*.{js,jsx,ts,tsx}',
+    './src/**/*.{js,jsx,ts,tsx}',
     './index.html',
   ],
   prefix: "",
