@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { InvokeLLM } from '@/integrations/Core';
+import { useRealTimeData } from './services/RealTimeDataService';
 import { 
   Zap, 
   Leaf, 
@@ -13,7 +14,10 @@ import {
   BarChart3,
   Sun,
   Wind,
-  Factory
+  Factory,
+  Activity,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
@@ -29,10 +33,49 @@ export default function ElectricityMap() {
   const [loading, setLoading] = useState(true);
   const [mapStyle, setMapStyle] = useState('consumption');
   const [showPanel, setShowPanel] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
 
   useEffect(() => {
     loadElectricityData();
   }, []);
+
+  useEffect(() => {
+    if (realTimeData && mapData) {
+      // Apply real-time updates to map data
+      const updatedMapData = { ...mapData };
+
+      // Update county data with real-time information
+      if (realTimeData.countyUpdates) {
+        updatedMapData.counties = updatedMapData.counties.map(county => {
+          const realTimeUpdate = realTimeData.countyUpdates[county.name];
+          if (realTimeUpdate) {
+            return {
+              ...county,
+              currentConsumption: realTimeUpdate.currentConsumption,
+              currentRenewableGeneration: realTimeUpdate.renewableGeneration,
+              gridStress: realTimeUpdate.gridStress,
+              isRealTime: true
+            };
+          }
+          return county;
+        });
+      }
+
+      // Update state totals with real-time data
+      if (realTimeData.stateMetrics) {
+        updatedMapData.state_totals = {
+          ...updatedMapData.state_totals,
+          current_consumption: realTimeData.stateMetrics.totalCurrentConsumption,
+          current_renewable_percentage: realTimeData.stateMetrics.renewablePercentageNow,
+          gridStatus: realTimeData.stateMetrics.gridStatusMessage
+        };
+      }
+
+      setMapData(updatedMapData);
+      setLastUpdated(new Date(realTimeData.timestamp).toLocaleString());
+    }
+  }, [realTimeData]);
 
   const getFallbackArizonaData = () => {
     return {
@@ -399,10 +442,30 @@ export default function ElectricityMap() {
               </div>
             </div>
             
-            <MapControls 
-              mapStyle={mapStyle}
-              setMapStyle={setMapStyle}
-            />
+            <div className="flex items-center space-x-4">
+              {/* Real-time Status Indicator */}
+              <div className="flex items-center space-x-2">
+                {isRealTimeConnected ? (
+                  <>
+                    <Wifi className="w-4 h-4 text-green-600" />
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-sm text-green-700 font-medium">Live</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-500">Static</span>
+                  </>
+                )}
+              </div>
+
+              <MapControls
+                mapStyle={mapStyle}
+                setMapStyle={setMapStyle}
+              />
+            </div>
           </div>
         </div>
       </header>
@@ -518,7 +581,11 @@ export default function ElectricityMap() {
           </div>
         </div>
 
-        <DataSources sources={mapData?.data_sources} />
+        <DataSources
+          sources={mapData?.data_sources}
+          lastUpdated={lastUpdated}
+          isRealTime={isRealTimeConnected}
+        />
       </div>
     </div>
   );

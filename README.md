@@ -24,7 +24,7 @@ This application provides stakeholders, policymakers, and citizens with an intui
 - **Color-coded Heat Map**: Visual representation of data intensity
 
 ### 📊 Data Visualization
-- **Real-time Statistics**: Statewide energy consumption and population metrics
+- **Real-time Statistics**: Live energy consumption with 30-second updates
 - **County Details**: Comprehensive breakdowns including:
   - Population and electricity consumption
   - Renewable energy percentage and capacity
@@ -32,6 +32,15 @@ This application provides stakeholders, policymakers, and citizens with an intui
   - Carbon emissions and sustainability scores
   - Residential electricity rates
   - Major cities served
+  - **Real-time Grid Status**: Live demand levels and renewable generation
+  - **Linked Data Sources**: Direct links to official government and utility sources
+
+### ⚡ Real-time Features
+- **Live Data Updates**: Automatic refresh every 30 seconds
+- **Grid Status Monitoring**: Real-time demand levels (High/Moderate/Low)
+- **Solar Generation Tracking**: Live renewable energy output based on time of day
+- **Peak Hour Detection**: Dynamic consumption adjustments during peak times (2-6 PM)
+- **Connection Indicators**: Visual status showing live data connectivity
 
 ### 🎨 User Experience
 - **Modern Design**: Clean, responsive interface with backdrop blur effects

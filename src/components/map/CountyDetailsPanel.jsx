@@ -3,17 +3,19 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  X, 
-  Zap, 
-  Users, 
-  Leaf, 
-  TrendingUp, 
-  TrendingDown, 
+import {
+  X,
+  Zap,
+  Users,
+  Leaf,
+  TrendingUp,
+  TrendingDown,
   Sun,
   Wind,
   Factory,
-  MapPin
+  MapPin,
+  Activity,
+  AlertTriangle
 } from 'lucide-react';
 
 export default function CountyDetailsPanel({ county, onClose }) {
@@ -30,6 +32,15 @@ export default function CountyDetailsPanel({ county, onClose }) {
     return num.toFixed(0);
   };
 
+  const getGridStressColor = (stress) => {
+    switch (stress) {
+      case 'High': return 'bg-red-100 text-red-800';
+      case 'Moderate': return 'bg-yellow-100 text-yellow-800';
+      case 'Low': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
     <Card className="shadow-xl border-0 bg-white/95 backdrop-blur">
       <CardHeader className="pb-4">
@@ -37,6 +48,12 @@ export default function CountyDetailsPanel({ county, onClose }) {
           <CardTitle className="flex items-center space-x-2">
             <MapPin className="w-5 h-5 text-blue-600" />
             <span>{county.name} County</span>
+            {county.isRealTime && (
+              <div className="flex items-center space-x-1">
+                <Activity className="w-4 h-4 text-green-600" />
+                <span className="text-xs text-green-600 font-medium">LIVE</span>
+              </div>
+            )}
           </CardTitle>
           <Button
             variant="ghost"
@@ -62,11 +79,17 @@ export default function CountyDetailsPanel({ county, onClose }) {
           </div>
           <div className="space-y-1">
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              Consumption
+              {county.isRealTime ? 'Current Usage' : 'Annual Consumption'}
             </p>
             <p className="text-lg font-bold text-slate-900">
-              {formatNumber(county.consumption_mwh)} MWh
+              {county.isRealTime && county.currentConsumption
+                ? formatNumber(county.currentConsumption) + ' MWh/yr'
+                : formatNumber(county.consumption_mwh) + ' MWh'
+              }
             </p>
+            {county.isRealTime && (
+              <p className="text-xs text-green-600">Live data</p>
+            )}
           </div>
         </div>
 
@@ -142,6 +165,26 @@ export default function CountyDetailsPanel({ county, onClose }) {
             })}
           </div>
         </div>
+
+        {/* Grid Status - Real-time only */}
+        {county.isRealTime && county.gridStress && (
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+              Grid Status
+            </p>
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="w-4 h-4 text-slate-600" />
+              <Badge className={getGridStressColor(county.gridStress)}>
+                {county.gridStress} Demand
+              </Badge>
+              {county.currentRenewableGeneration && (
+                <span className="text-sm text-slate-600">
+                  ({formatNumber(county.currentRenewableGeneration)} MW renewable)
+                </span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Per Capita Usage */}
         <div className="bg-slate-50 rounded-lg p-4 space-y-2">
