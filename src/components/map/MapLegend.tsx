@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { MapLegendProps } from '@/types';
 
-export default function MapLegend({ mapStyle }) {
+export default function MapLegend({ mapStyle }: MapLegendProps) {
   const legends = {
     consumption: {
       title: 'Electricity Consumption (MWh per capita)',

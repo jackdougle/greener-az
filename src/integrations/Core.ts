@@ -1,8 +1,10 @@
-export async function InvokeLLM({ prompt, add_context_from_internet = false, response_json_schema = null }) {
+import { InvokeLLMParams, MapData } from '@/types';
+
+export async function InvokeLLM({ prompt, add_context_from_internet = false, response_json_schema }: InvokeLLMParams): Promise<MapData> {
   try {
     console.log('InvokeLLM called with:', { prompt, add_context_from_internet, response_json_schema });
 
-    const fallbackArizonaData = {
+    const fallbackArizonaData: MapData = {
       counties: [
         {
           name: "Maricopa",

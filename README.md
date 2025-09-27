@@ -50,11 +50,13 @@ This application provides stakeholders, policymakers, and citizens with an intui
 
 ## 🏗️ Technology Stack
 
-- **Frontend**: React 18 with Vite
+- **Frontend**: React 18 with Vite and TypeScript
+- **Type Safety**: Full TypeScript implementation with strict typing
 - **Mapping**: React-Leaflet with OpenStreetMap tiles
 - **Styling**: Tailwind CSS with custom design system
 - **Icons**: Lucide React
 - **UI Components**: Custom shadcn/ui-inspired components
+- **Real-time Services**: Custom TypeScript service architecture
 
 ## 📊 Data Sources
 
@@ -99,6 +101,11 @@ Our application uses verified data from multiple reliable sources:
 ```bash
 npm run build
 npm run preview
+```
+
+### TypeScript Commands
+```bash
+npm run type-check  # Type checking without emission
 ```
 
 ## 📈 Key Metrics Displayed

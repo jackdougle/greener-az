@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { InvokeLLM } from '@/integrations/Core';
 import { useRealTimeData } from './services/RealTimeDataService';
+import { MapData, County, MapStyleType } from '@/types';
 import { 
   Zap, 
   Leaf, 
@@ -28,12 +29,12 @@ import MapControls from './components/map/MapControls';
 import DataSources from './components/DataSources';
 
 export default function ElectricityMap() {
-  const [mapData, setMapData] = useState(null);
-  const [selectedCounty, setSelectedCounty] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [mapStyle, setMapStyle] = useState('consumption');
-  const [showPanel, setShowPanel] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(null);
+  const [mapData, setMapData] = useState<MapData | null>(null);
+  const [selectedCounty, setSelectedCounty] = useState<County | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [mapStyle, setMapStyle] = useState<MapStyleType>('consumption');
+  const [showPanel, setShowPanel] = useState<boolean>(false);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
 
   useEffect(() => {
@@ -372,7 +373,7 @@ export default function ElectricityMap() {
     setLoading(false);
   };
 
-  const getColorByValue = (value, metric = 'consumption') => {
+  const getColorByValue = (value: number, metric: MapStyleType = 'consumption'): string => {
     if (!mapData || !mapData.counties || mapData.counties.length === 0 || value === undefined || value === null) return '#94a3b8';
     
     const values = mapData.counties.map(c => {
@@ -408,7 +409,7 @@ export default function ElectricityMap() {
     return colors[4];
   };
 
-  const handleCountyClick = (county) => {
+  const handleCountyClick = (county: County): void => {
     setSelectedCounty(county);
     setShowPanel(true);
   };
@@ -583,7 +584,7 @@ export default function ElectricityMap() {
 
         <DataSources
           sources={mapData?.data_sources}
-          lastUpdated={lastUpdated}
+          lastUpdated={lastUpdated || undefined}
           isRealTime={isRealTimeConnected}
         />
       </div>

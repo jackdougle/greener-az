@@ -17,22 +17,23 @@ import {
   Activity,
   AlertTriangle
 } from 'lucide-react';
+import { CountyDetailsPanelProps } from '@/types';
 
-export default function CountyDetailsPanel({ county, onClose }) {
-  const getSustainabilityColor = (score) => {
+export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPanelProps) {
+  const getSustainabilityColor = (score: number): string => {
     if (score >= 80) return 'bg-green-100 text-green-800';
     if (score >= 60) return 'bg-yellow-100 text-yellow-800';
     return 'bg-red-100 text-red-800';
   };
 
-  const formatNumber = (num) => {
+  const formatNumber = (num: number | undefined): string => {
     if (typeof num !== 'number' || isNaN(num)) return 'N/A';
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toFixed(0);
   };
 
-  const getGridStressColor = (stress) => {
+  const getGridStressColor = (stress: string): string => {
     switch (stress) {
       case 'High': return 'bg-red-100 text-red-800';
       case 'Moderate': return 'bg-yellow-100 text-yellow-800';
@@ -148,7 +149,7 @@ export default function CountyDetailsPanel({ county, onClose }) {
           </p>
           <div className="space-y-1">
             {county.primary_sources?.slice(0, 3).map((source, index) => {
-              const icons = {
+              const icons: Record<string, React.ComponentType<{ className?: string }>> = {
                 'Solar': Sun,
                 'Wind': Wind,
                 'Natural Gas': Factory,

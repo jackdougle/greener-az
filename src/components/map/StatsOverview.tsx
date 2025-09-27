@@ -1,15 +1,16 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Zap, 
-  Users, 
-  Leaf, 
+import {
+  Zap,
+  Users,
+  Leaf,
   TrendingDown
 } from 'lucide-react';
+import { StatsOverviewProps } from '@/types';
 
-export default function StatsOverview({ data, counties }) {
-  const formatNumber = (num) => {
+export default function StatsOverview({ data, counties }: StatsOverviewProps) {
+  const formatNumber = (num: number | undefined): string => {
     if (typeof num !== 'number' || isNaN(num)) return 'N/A';
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
@@ -22,7 +23,7 @@ export default function StatsOverview({ data, counties }) {
 
   const topRenewableCounty = counties?.length > 0
     ? counties.reduce((prev, current) => ((prev.renewable_percentage || 0) > (current.renewable_percentage || 0)) ? prev : current)
-    : {};
+    : { name: '', renewable_percentage: 0, renewable_capacity_mw: 0 };
 
   const stats = [
     {

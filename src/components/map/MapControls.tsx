@@ -1,13 +1,19 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  Zap, 
-  Leaf, 
-  BarChart3 
+import {
+  Zap,
+  Leaf,
+  BarChart3
 } from 'lucide-react';
+import { MapControlsProps, MapStyleType } from '@/types';
 
-export default function MapControls({ mapStyle, setMapStyle }) {
-  const controls = [
+export default function MapControls({ mapStyle, setMapStyle }: MapControlsProps) {
+  const controls: Array<{
+    id: MapStyleType;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    description: string;
+  }> = [
     {
       id: 'consumption',
       label: 'Consumption',

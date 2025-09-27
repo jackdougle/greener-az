@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink, Clock, Wifi } from 'lucide-react';
+import { DataSourcesProps } from '@/types';
 
-export default function DataSources({ sources, lastUpdated, isRealTime = false }) {
-  const sourceLinks = {
+export default function DataSources({ sources, lastUpdated, isRealTime = false }: DataSourcesProps) {
+  const sourceLinks: Record<string, string> = {
     "U.S. Energy Information Administration (EIA) - 2024 Data": "https://www.eia.gov/electricity/state/arizona/",
     "Arizona Corporation Commission - Rate Filings 2024": "https://www.azcc.gov/",
     "Arizona Public Service Company - 2024 Annual Reports": "https://www.aps.com/en/About/Our-Company/Clean-Energy",

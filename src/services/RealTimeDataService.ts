@@ -1,21 +1,19 @@
 import React from 'react';
+import { RealTimeData, ConnectionStatus, UseRealTimeDataReturn } from '@/types';
 
 class RealTimeDataService {
-  constructor() {
-    this.subscribers = [];
-    this.isConnected = false;
-    this.updateInterval = null;
-    this.baseData = null;
-  }
+  private subscribers: Array<(data: RealTimeData) => void> = [];
+  private isConnected: boolean = false;
+  private updateInterval: NodeJS.Timeout | null = null;
 
-  subscribe(callback) {
+  subscribe(callback: (data: RealTimeData) => void): () => void {
     this.subscribers.push(callback);
     return () => {
       this.subscribers = this.subscribers.filter(sub => sub !== callback);
     };
   }
 
-  async connect() {
+  async connect(): Promise<void> {
     this.isConnected = true;
     console.log('🔴 Real-time service connected');
 
@@ -28,7 +26,7 @@ class RealTimeDataService {
     await this.fetchAndBroadcastUpdates();
   }
 
-  disconnect() {
+  disconnect(): void {
     this.isConnected = false;
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
@@ -37,7 +35,7 @@ class RealTimeDataService {
     console.log('🟡 Real-time service disconnected');
   }
 
-  async fetchAndBroadcastUpdates() {
+  private async fetchAndBroadcastUpdates(): Promise<void> {
     try {
       const updates = await this.fetchRealTimeUpdates();
       this.broadcastToSubscribers(updates);
@@ -46,7 +44,7 @@ class RealTimeDataService {
     }
   }
 
-  async fetchRealTimeUpdates() {
+  private async fetchRealTimeUpdates(): Promise<RealTimeData> {
     // Simulate real-time data variations based on current time and realistic patterns
     const now = new Date();
     const hour = now.getHours();
@@ -78,17 +76,17 @@ class RealTimeDataService {
         'Maricopa': {
           currentConsumption: Math.round(45200000 * consumptionMultiplier * (0.95 + Math.random() * 0.1)),
           renewableGeneration: Math.round(3650 * solarEfficiency * (0.9 + Math.random() * 0.2)),
-          gridStress: isPeakHour ? 'High' : isNightTime ? 'Low' : 'Normal'
+          gridStress: (isPeakHour ? 'High' : isNightTime ? 'Low' : 'Normal') as 'High' | 'Moderate' | 'Low' | 'Normal'
         },
         'Pima': {
           currentConsumption: Math.round(8200000 * consumptionMultiplier * (0.95 + Math.random() * 0.1)),
           renewableGeneration: Math.round(1650 * solarEfficiency * (0.9 + Math.random() * 0.2)),
-          gridStress: isPeakHour ? 'High' : isNightTime ? 'Low' : 'Normal'
+          gridStress: (isPeakHour ? 'High' : isNightTime ? 'Low' : 'Normal') as 'High' | 'Moderate' | 'Low' | 'Normal'
         },
         'Pinal': {
           currentConsumption: Math.round(3800000 * consumptionMultiplier * (0.95 + Math.random() * 0.1)),
           renewableGeneration: Math.round(3200 * solarEfficiency * (0.9 + Math.random() * 0.2)),
-          gridStress: isPeakHour ? 'Moderate' : 'Normal'
+          gridStress: (isPeakHour ? 'Moderate' : 'Normal') as 'High' | 'Moderate' | 'Low' | 'Normal'
         }
       },
       stateMetrics: {
@@ -103,7 +101,7 @@ class RealTimeDataService {
     return updates;
   }
 
-  calculateSolarEfficiency(hour) {
+  private calculateSolarEfficiency(hour: number): number {
     // Solar efficiency curve: 0% at night, peak around noon
     if (hour < 6 || hour > 19) return 0; // No solar at night
     if (hour >= 6 && hour <= 8) return (hour - 6) / 2 * 0.3; // Morning ramp
@@ -113,7 +111,7 @@ class RealTimeDataService {
     return 0;
   }
 
-  broadcastToSubscribers(updates) {
+  private broadcastToSubscribers(updates: RealTimeData): void {
     this.subscribers.forEach(callback => {
       try {
         callback(updates);
@@ -123,7 +121,7 @@ class RealTimeDataService {
     });
   }
 
-  getConnectionStatus() {
+  getConnectionStatus(): ConnectionStatus {
     return {
       isConnected: this.isConnected,
       subscriberCount: this.subscribers.length,
@@ -136,9 +134,9 @@ class RealTimeDataService {
 export const realTimeDataService = new RealTimeDataService();
 
 // Hook for React components
-export function useRealTimeData() {
-  const [data, setData] = React.useState(null);
-  const [isConnected, setIsConnected] = React.useState(false);
+export function useRealTimeData(): UseRealTimeDataReturn {
+  const [data, setData] = React.useState<RealTimeData | null>(null);
+  const [isConnected, setIsConnected] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const unsubscribe = realTimeDataService.subscribe((updates) => {
