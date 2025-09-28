@@ -259,32 +259,32 @@
 @layer utilities {
   /* Fade in animations */
   .fade-in {
-    animation: fadeIn 0.6s ease-out forwards;
+    animation: fadeIn 0.5s ease-out forwards;
     opacity: 0;
   }
 
   .fade-in-up {
-    animation: fadeInUp 0.8s ease-out forwards;
+    animation: fadeInUp 0.6s ease-out forwards;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
 
   .fade-in-scale {
-    animation: fadeInScale 0.7s ease-out forwards;
+    animation: fadeInScale 0.5s ease-out forwards;
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
 
   .slide-in-right {
-    animation: slideInRight 0.8s ease-out forwards;
+    animation: slideInRight 0.6s ease-out forwards;
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(20px);
   }
 
   .slide-in-left {
-    animation: slideInLeft 0.8s ease-out forwards;
+    animation: slideInLeft 0.6s ease-out forwards;
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(-20px);
   }
 
   /* Staggered animations */
@@ -297,12 +297,12 @@
 
   /* Hover effects */
   .hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
 
   .hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08), 0 6px 8px -3px rgba(0, 0, 0, 0.03);
   }
 
   .hover-scale {
@@ -310,7 +310,7 @@
   }
 
   .hover-scale:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
 
   .hover-glow {
@@ -318,7 +318,7 @@
   }
 
   .hover-glow:hover {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
   }
 
   /* Pulse animation for live indicators */
@@ -349,7 +349,7 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -360,7 +360,7 @@
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -371,7 +371,7 @@
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(20px);
   }
   to {
     opacity: 1;
@@ -382,7 +382,7 @@
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(-20px);
   }
   to {
     opacity: 1;

@@ -64,7 +64,7 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <Card key={index} className="overflow-hidden border-0 shadow-lg bg-card backdrop-blur">
+          <Card key={index} className={`overflow-hidden border-0 shadow-lg bg-card backdrop-blur fade-in-up hover-lift transition-smooth stagger-${index + 1}`}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
@@ -78,7 +78,7 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
                     {stat.description}
                   </p>
                 </div>
-                <div className={`w-12 h-12 rounded-xl ${stat.gradient} flex items-center justify-center`}>
+                <div className={`w-12 h-12 rounded-xl ${stat.gradient} flex items-center justify-center hover-scale transition-smooth`}>
                   <stat.icon className="w-6 h-6 text-black" />
                 </div>
               </div>
@@ -89,7 +89,7 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
 
       {/* Additional Insights */}
       <div className="grid md:grid-cols-2 gap-6">
-        <Card className="border-0 shadow-lg bg-card backdrop-blur">
+        <Card className="border-0 shadow-lg bg-card backdrop-blur slide-in-left hover-lift transition-smooth stagger-5">
           <CardContent className="p-6">
             <h3 className="font-semibold text-foreground mb-4">Sustainability Leader</h3>
             <div className="space-y-2">
@@ -109,7 +109,7 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-card backdrop-blur">
+        <Card className="border-0 shadow-lg bg-card backdrop-blur slide-in-right hover-lift transition-smooth stagger-6">
           <CardContent className="p-6">
             <h3 className="font-semibold text-foreground mb-4">State Average</h3>
             <div className="space-y-3">

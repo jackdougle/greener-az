@@ -106,7 +106,7 @@ export default function ChatbotWidget() {
       <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setOpen((s) => !s)}
-          className="w-32 h-32 md:w-36 md:h-36 rounded-full shadow-2xl bg-gradient-to-br from-pink-100 to-green-100 flex items-center justify-center transform hover:scale-105 transition border-2 border-pink-200"
+          className="w-32 h-32 md:w-36 md:h-36 rounded-full shadow-2xl bg-gradient-to-br from-pink-100 to-green-100 flex items-center justify-center hover-lift hover-glow transition-smooth border-2 border-pink-200 fade-in-scale pulse-soft"
           aria-label="Open chatbot"
         >
           <img src="/assets/char.gif" alt="assistant" className="w-28 h-28 md:w-32 md:h-32" />
@@ -117,11 +117,11 @@ export default function ChatbotWidget() {
       {open && (
         <div
           ref={panelRef}
-          className="fixed z-50 w-80 max-w-full"
+          className="fixed z-50 w-80 max-w-full fade-in-scale"
           style={pos ? { left: pos.left, top: pos.top } : { right: 24, bottom: 96 }}
         >
           <div
-            className="bg-gradient-to-br from-pink-50 to-green-50 rounded-lg shadow-lg overflow-hidden flex flex-col border-2 border-pink-200"
+            className="bg-gradient-to-br from-pink-50 to-green-50 rounded-lg shadow-lg overflow-hidden flex flex-col border-2 border-pink-200 hover-lift transition-smooth"
             style={{ minHeight: 320, maxHeight: '60vh' }}
           >
             <div
@@ -175,7 +175,7 @@ export default function ChatbotWidget() {
                   placeholder="Ask about the map or energy..."
                   className="flex-1 px-3 py-2 rounded border border-pink-200 bg-white focus:border-pink-400 focus:outline-none"
                 />
-                <button onClick={handleSend} className="px-3 py-2 rounded bg-pink-500 text-white hover:bg-pink-600 transition-colors">
+                <button onClick={handleSend} className="px-3 py-2 rounded bg-pink-500 text-white hover:bg-pink-600 hover-scale transition-smooth">
                   Send
                 </button>
               </div>
