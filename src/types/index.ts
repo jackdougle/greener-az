@@ -5,6 +5,22 @@ export interface Coordinates {
   lng: number;
 }
 
+// Carbon footprint estimation types
+export interface CarbonFootprintEstimate {
+  householdCarbonTonsPerYear: number;
+  householdCarbonKgPerMonth: number;
+  householdCarbonPoundsPerDay: number;
+  perCapitaCarbonTonsPerYear: number;
+  perCapitaCarbonKgPerMonth: number;
+  perCapitaCarbonPoundsPerDay: number;
+  equivalentCarMilesPerYear: number;
+  equivalentTreesNeeded: number;
+  equivalentGasolineGallons: number;
+  renewableImpactReduction: number;
+  nonRenewableEmissions: number;
+  renewableEmissions: number;
+}
+
 export interface County {
   name: string;
   consumption_mwh: number;
@@ -24,6 +40,9 @@ export interface County {
   currentRenewableGeneration?: number;
   gridStress?: 'High' | 'Moderate' | 'Low' | 'Normal';
   isRealTime?: boolean;
+
+  // Carbon footprint estimates
+  carbonFootprint?: CarbonFootprintEstimate;
 }
 
 export interface StateTotals {
@@ -104,6 +123,8 @@ export interface ConnectionStatus {
   isConnected: boolean;
   subscriberCount: number;
   lastUpdate: string;
+  usingRealApi?: boolean;
+  apiConfigured?: boolean;
 }
 
 export interface UseRealTimeDataReturn {
@@ -114,8 +135,3 @@ export interface UseRealTimeDataReturn {
 // Utility types
 export type MapStyleType = 'consumption' | 'renewable' | 'sustainability';
 
-export interface InvokeLLMParams {
-  prompt: string;
-  add_context_from_internet?: boolean;
-  response_json_schema?: object;
-}

@@ -36,11 +36,12 @@ This application provides stakeholders, policymakers, and citizens with an intui
   - **Linked Data Sources**: Direct links to official government and utility sources
 
 ### ⚡ Real-time Features
-- **Live Data Updates**: Automatic refresh every 30 seconds
-- **Grid Status Monitoring**: Real-time demand levels (High/Moderate/Low)
-- **Solar Generation Tracking**: Live renewable energy output based on time of day
-- **Peak Hour Detection**: Dynamic consumption adjustments during peak times (2-6 PM)
+- **Live EIA Data**: Real electricity data from U.S. Energy Information Administration API
+- **Grid Status Monitoring**: Real-time demand levels from Arizona balancing authorities (AZPS, SRP, WALC)
+- **5-minute Cached Updates**: Efficient API usage with automatic caching
+- **Automatic Fallback**: Seamless switch to simulated data if API unavailable
 - **Connection Indicators**: Visual status showing live data connectivity
+- **Real Grid Stress**: Calculated from actual demand vs generation ratios
 
 ### 🎨 User Experience
 - **Modern Design**: Clean, responsive interface with backdrop blur effects
@@ -89,7 +90,22 @@ Our application uses verified data from multiple reliable sources:
    npm install
    ```
 
-3. **Start development server**
+3. **Set up real-time data (optional but recommended)**
+
+   a. Get a free EIA API key (30 seconds):
+   - Visit: https://www.eia.gov/opendata/
+   - Register with your email
+   - Copy your API key
+
+   b. Configure environment:
+   ```bash
+   cp .env.example .env.local
+   # Add your API key to .env.local:
+   # VITE_EIA_API_KEY=your_api_key_here
+   # VITE_ENABLE_LIVE_DATA=true
+   ```
+
+4. **Start development server**
    ```bash
    npm run dev
    ```

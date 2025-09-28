@@ -3,8 +3,9 @@ import { MapContainer, TileLayer, ZoomControl, CircleMarker, Tooltip } from 'rea
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { InvokeLLM } from '@/integrations/Core';
+import { loadRealElectricityData } from '@/integrations/Core';
 import { useRealTimeData } from './services/RealTimeDataService';
+import { CarbonFootprintService } from './services/CarbonFootprintService';
 import { MapData, County, MapStyleType } from '@/types';
 import { 
   Zap, 
@@ -24,9 +25,13 @@ import 'leaflet/dist/leaflet.css';
 
 import MapLegend from './components/map/MapLegend';
 import CountyDetailsPanel from './components/map/CountyDetailsPanel';
+import CarbonFootprintCard from './components/map/CarbonFootprintCard';
+import CarbonReductionModal from './components/CarbonReductionModal';
 import StatsOverview from './components/map/StatsOverview';
 import MapControls from './components/map/MapControls';
 import DataSources from './components/DataSources';
+import ApiConfigurationNotice from './components/ApiConfigurationNotice';
+import { realTimeDataService } from './services/RealTimeDataService';
 
 export default function ElectricityMap() {
   const [mapData, setMapData] = useState<MapData | null>(null);
@@ -36,7 +41,16 @@ export default function ElectricityMap() {
   const [showPanel, setShowPanel] = useState<boolean>(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [isUsingFallback, setIsUsingFallback] = useState<boolean>(false);
+  const [showCarbonModal, setShowCarbonModal] = useState<boolean>(false);
   const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
+  const [dataSourceInfo, setDataSourceInfo] = useState(realTimeDataService.getDataSourceInfo());
+
+  const formatNumber = (num: number | undefined): string => {
+    if (typeof num !== 'number' || isNaN(num)) return 'N/A';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toFixed(0);
+  };
 
   useEffect(() => {
     loadElectricityData();
@@ -76,8 +90,24 @@ export default function ElectricityMap() {
 
       setMapData(updatedMapData);
       setLastUpdated(new Date(realTimeData.timestamp).toLocaleString());
+
+      // Update data source info
+      setDataSourceInfo(realTimeDataService.getDataSourceInfo());
     }
   }, [realTimeData]);
+
+  // Helper function to enrich counties with carbon footprint estimates
+  const enrichCountiesWithCarbonFootprint = (counties: County[]): County[] => {
+    return counties.map(county => ({
+      ...county,
+      carbonFootprint: CarbonFootprintService.calculateCountyCarbonFootprint(
+        county.consumption_mwh,
+        county.population,
+        county.renewable_percentage,
+        county.carbon_emissions_tons
+      )
+    }));
+  };
 
   const getFallbackArizonaData = () => {
     return {
@@ -313,65 +343,21 @@ export default function ElectricityMap() {
   const loadElectricityData = async () => {
     setLoading(true);
     try {
-      const response = await InvokeLLM({
-        prompt: `I need comprehensive and accurate 2023 electricity data for all Arizona counties. Please provide REAL data from credible sources like EIA, Arizona Corporation Commission, APS, and TEP reports. For each of Arizona's 15 counties, provide realistic consumption data with proper coordinates.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            counties: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  consumption_mwh: { type: "number" },
-                  population: { type: "number" },
-                  major_cities: { type: "array", items: { type: "string" } },
-                  renewable_percentage: { type: "number" },
-                  avg_residential_rate: { type: "number" },
-                  primary_sources: { type: "array", items: { type: "string" } },
-                  sustainability_score: { type: "number" },
-                  carbon_emissions_tons: { type: "number" },
-                  coordinates: {
-                    type: "object",
-                    properties: {
-                      lat: { type: "number" },
-                      lng: { type: "number" }
-                    }
-                  },
-                  consumption_per_capita: { type: "number" },
-                  renewable_capacity_mw: { type: "number" }
-                }
-              }
-            },
-            state_totals: {
-              type: "object",
-              properties: {
-                total_consumption: { type: "number" },
-                total_population: { type: "number" },
-                avg_renewable_percentage: { type: "number" },
-                total_emissions: { type: "number" }
-              }
-            },
-            data_sources: {
-              type: "array",
-              items: { type: "string" }
-            }
-          }
-        }
-      });
+      console.log('🔄 Loading real EIA electricity data...');
+      const response = await loadRealElectricityData();
 
-      if (!response.counties || response.counties.length === 0) {
-        setMapData(getFallbackArizonaData());
-        setIsUsingFallback(true);
-      } else {
-        setMapData(response);
-        setIsUsingFallback(false);
-      }
+      const enrichedResponse = {
+        ...response,
+        counties: enrichCountiesWithCarbonFootprint(response.counties)
+      };
+      setMapData(enrichedResponse);
+      setIsUsingFallback(false);
+      console.log('✅ Successfully loaded real electricity data');
     } catch (error) {
-      console.error('Error loading electricity data:', error);
-      setMapData(getFallbackArizonaData());
+      console.error('❌ Error loading real electricity data, using fallback:', error);
+      const fallbackData = getFallbackArizonaData();
+      fallbackData.counties = enrichCountiesWithCarbonFootprint(fallbackData.counties);
+      setMapData(fallbackData);
       setIsUsingFallback(true);
     }
     setLoading(false);
@@ -421,11 +407,19 @@ export default function ElectricityMap() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+        <div className="text-center space-y-4 fade-in">
+          <div className="relative mx-auto">
+            <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+            <div className="absolute inset-0 w-12 h-12 border-4 border-emerald-300 border-t-transparent rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+          </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-slate-800">Loading Arizona Electricity Data</h3>
-            <p className="text-slate-600">Fetching real-time consumption and sustainability metrics...</p>
+            <h3 className="text-xl font-semibold text-slate-800 fade-in-up stagger-1">Loading Arizona Electricity Data</h3>
+            <p className="text-slate-600 fade-in-up stagger-2">Fetching real-time consumption and sustainability metrics...</p>
+            <div className="flex justify-center space-x-1 mt-4">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            </div>
           </div>
         </div>
       </div>
@@ -434,11 +428,11 @@ export default function ElectricityMap() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 fixed top-0 left-0 w-full z-50 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center">
+            <div className="flex items-center space-x-3 slide-in-left">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center hover-scale transition-bounce">
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -447,50 +441,83 @@ export default function ElectricityMap() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 slide-in-right">
               {/* Real-time Status Indicator */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 transition-smooth">
                 {isRealTimeConnected && !isUsingFallback ? (
                   <>
-                    <Wifi className="w-4 h-4 text-green-600" />
+                    <Wifi className="w-4 h-4 text-green-600 transition-smooth" />
                     <div className="flex items-center space-x-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-green-500 rounded-full pulse-soft"></div>
                       <span className="text-sm text-green-700 font-medium">Live</span>
                     </div>
                   </>
                 ) : isUsingFallback ? (
                   <>
-                    <WifiOff className="w-4 h-4 text-amber-500" />
+                    <WifiOff className="w-4 h-4 text-amber-500 transition-smooth" />
                     <span className="text-sm text-amber-600">Fallback</span>
                   </>
                 ) : (
                   <>
-                    <WifiOff className="w-4 h-4 text-gray-400" />
+                    <WifiOff className="w-4 h-4 text-gray-400 transition-smooth" />
                     <span className="text-sm text-gray-500">Static</span>
                   </>
                 )}
               </div>
 
-              <MapControls
-                mapStyle={mapStyle}
-                setMapStyle={setMapStyle}
-              />
+              <div className="fade-in stagger-2">
+                <MapControls
+                  mapStyle={mapStyle}
+                  setMapStyle={setMapStyle}
+                />
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-6">
-        {mapData && (
-          <StatsOverview 
-            data={mapData.state_totals}
-            counties={mapData.counties}
+      <div className="max-w-7xl mx-auto p-6 pt-24">
+        {/* API Configuration Notice */}
+        <div className="mb-6 fade-in">
+          <ApiConfigurationNotice
+            isApiConfigured={dataSourceInfo.isApiConfigured}
+            isUsingRealApi={dataSourceInfo.isUsingRealApi}
           />
+        </div>
+
+        {mapData && (
+          <div className="fade-in-up stagger-1">
+            <StatsOverview
+              data={mapData.state_totals}
+              counties={mapData.counties}
+            />
+          </div>
         )}
 
-        <div className="grid lg:grid-cols-4 gap-6 mt-6">
-          <div className="lg:col-span-3">
-            <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur">
+        <div className="space-y-6 mt-6">
+          {/* Carbon Footprint Card - Horizontal Layout */}
+          {showPanel && selectedCounty && (
+            <div className="slide-in-right">
+              <CarbonFootprintCard
+                county={selectedCounty}
+                onShowModal={() => setShowCarbonModal(true)}
+              />
+            </div>
+          )}
+
+          {/* County Details Card - Horizontal Layout */}
+          {showPanel && selectedCounty && (
+            <div className="slide-in-left stagger-1">
+              <CountyDetailsPanel
+                county={selectedCounty}
+                onClose={() => setShowPanel(false)}
+              />
+            </div>
+          )}
+
+          {/* Map - Full Width */}
+          <div className="fade-in-scale stagger-2">
+            <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur hover-lift">
               <CardContent className="p-0">
                 <div className="h-[600px] relative">
                   <MapContainer
@@ -519,7 +546,7 @@ export default function ElectricityMap() {
                         <CircleMarker
                           key={index}
                           center={[county.coordinates.lat, county.coordinates.lng]}
-                          pathOptions={{ 
+                          pathOptions={{
                             fillColor: getColorByValue(value, mapStyle),
                             color: 'white',
                             weight: 2,
@@ -531,12 +558,33 @@ export default function ElectricityMap() {
                             click: () => {
                               handleCountyClick(county);
                             },
+                            mouseover: (e) => {
+                              const marker = e.target;
+                              marker.setStyle({
+                                weight: 3,
+                                fillOpacity: 1,
+                                color: '#3b82f6'
+                              });
+                            },
+                            mouseout: (e) => {
+                              const marker = e.target;
+                              marker.setStyle({
+                                weight: 2,
+                                fillOpacity: 0.8,
+                                color: 'white'
+                              });
+                            }
                           }}
                         >
                           <Tooltip>
-                            <div className="p-1">
-                              <h4 className="font-bold text-slate-800">{county.name} County</h4>
-                              <p className="text-sm text-slate-600">Click to see details</p>
+                            <div className="p-2 bg-white/95 backdrop-blur rounded-lg shadow-lg border-0">
+                              <h4 className="font-bold text-slate-800 mb-1">{county.name} County</h4>
+                              <div className="text-xs text-slate-600 space-y-0.5">
+                                <p>Population: {formatNumber(county.population)}</p>
+                                <p>Consumption: {formatNumber(county.consumption_mwh)} MWh</p>
+                                <p>Renewable: {county.renewable_percentage}%</p>
+                              </div>
+                              <p className="text-xs text-blue-600 mt-2 font-medium">Click for details →</p>
                             </div>
                           </Tooltip>
                         </CircleMarker>
@@ -551,53 +599,26 @@ export default function ElectricityMap() {
               </CardContent>
             </Card>
           </div>
-
-          <div className="lg:col-span-1">
-            {showPanel && selectedCounty ? (
-              <CountyDetailsPanel 
-                county={selectedCounty}
-                onClose={() => setShowPanel(false)}
-              />
-            ) : (
-              <Card className="shadow-xl border-0 bg-white/95 backdrop-blur">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <MapPin className="w-5 h-5 text-blue-600" />
-                    <span>Select a County</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-600 mb-4">
-                    Click on any county circle to view detailed electricity usage, 
-                    renewable energy data, and sustainability insights.
-                  </p>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                      <span>High consumption</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                      <span>Moderate consumption</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                      <span>Low consumption</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
         </div>
 
-        <DataSources
-          sources={mapData?.data_sources}
-          lastUpdated={lastUpdated || undefined}
-          isRealTime={isRealTimeConnected}
-          isUsingFallback={isUsingFallback}
-        />
+        <div className="fade-in-up stagger-3">
+          <DataSources
+            sources={mapData?.data_sources}
+            lastUpdated={lastUpdated || undefined}
+            isRealTime={isRealTimeConnected}
+            isUsingFallback={isUsingFallback}
+          />
+        </div>
       </div>
+
+      {/* Carbon Reduction Modal - Full Page Overlay */}
+      {selectedCounty && (
+        <CarbonReductionModal
+          county={selectedCounty}
+          isOpen={showCarbonModal}
+          onClose={() => setShowCarbonModal(false)}
+        />
+      )}
     </div>
   );
 }
