@@ -118,8 +118,12 @@ export async function loadRealElectricityData(): Promise<MapData> {
       throw new Error('EIA API not configured');
     }
 
-    // Fetch real EIA data
-    const eiaData = await eiaApiService.fetchArizonaElectricityData();
+    // Fetch real EIA data and residential rate data in parallel
+    const [eiaData, residentialRate] = await Promise.all([
+      eiaApiService.fetchArizonaElectricityData(),
+      eiaApiService.fetchArizonaResidentialRateData()
+    ]);
+
     console.log('✅ Successfully fetched EIA data:', eiaData);
 
     // Convert EIA data to county-level data using real consumption
@@ -145,7 +149,7 @@ export async function loadRealElectricityData(): Promise<MapData> {
         population: metadata.population,
         major_cities: metadata.major_cities,
         renewable_percentage: Math.min(renewablePercentage, 45), // Cap at 45%
-        avg_residential_rate: parseFloat((11.0 + Math.random() * 3).toFixed(2)), // Estimate range 11-14 cents/kWh
+        avg_residential_rate: residentialRate, // Use real fetched rate
         primary_sources: renewablePercentage > 25 ? ["Solar", "Natural Gas", "Nuclear"] : ["Natural Gas", "Solar", "Coal"],
         sustainability_score: Math.round(renewablePercentage * 1.5 + 20), // Rough calculation
         carbon_emissions_tons: Math.round(carbonEmissions),

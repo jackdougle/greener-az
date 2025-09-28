@@ -278,6 +278,65 @@ class EIAApiService {
   }
 
   /**
+   * Fetches the latest average residential electricity rate for Arizona
+   */
+  async fetchArizonaResidentialRateData(): Promise<number> {
+    if (!this.isConfigured()) {
+      throw new Error('EIA API key not configured.');
+    }
+
+    const cacheKey = 'arizona-residential-rate';
+    const cached = this.requestCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
+      return cached.data;
+    }
+
+    try {
+      const url = new URL(`${this.baseUrl}/electricity/retail-sales/data`);
+      url.searchParams.set('api_key', this.apiKey);
+      url.searchParams.set('frequency', 'monthly');
+      url.searchParams.set('data[0]', 'price');
+      url.searchParams.set('facets[sectorid][]', 'RES'); // Residential sector
+      url.searchParams.set('facets[stateid][]', 'AZ'); // Arizona
+      url.searchParams.set('sort[0][column]', 'period');
+      url.searchParams.set('sort[0][direction]', 'desc');
+      url.searchParams.set('length', '1');
+
+      console.log('🔄 Fetching EIA residential rate data for Arizona...');
+
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`EIA API request failed (${response.status}): ${errorText}`);
+      }
+
+      const data = await response.json();
+      // The retail-sales endpoint has a different structure
+      const rateData = data?.response?.data?.[0];
+      const rate = parseFloat(rateData?.price);
+
+      if (isNaN(rate)) {
+        console.error('❌ Invalid or missing residential rate data in API response. First data object:', rateData);
+        throw new Error('Failed to parse residential rate from EIA API.');
+      }
+
+      console.log(`✅ Received residential rate: ${rate} cents/kWh`);
+      this.requestCache.set(cacheKey, { data: rate, timestamp: Date.now() });
+      return rate;
+
+    } catch (error) {
+      console.error('Error fetching EIA residential rate data:', error);
+      // Fallback to a reasonable static value if API fails
+      return 13.5;
+    }
+  }
+
+  /**
    * Clears the request cache
    */
   clearCache(): void {
