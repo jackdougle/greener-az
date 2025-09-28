@@ -7,9 +7,7 @@ function sleep(ms: number) {
 }
 
 const MOCK_RESPONSES = [
-  "Hi — I'm Catina! I can help with the map, county data, or carbon footprint questions.",
-  "Looks like there's no chat backend right now. Try asking about county renewable percentages.",
-  "I'm running in offline mode — here's a sample reply!"
+  "Hi — I'm Catina! I can help with the map, county data, or carbon footprint questionsI'm running in offline mode — here's a sample reply!"
 ]
 
 export default function useChatbot() {
