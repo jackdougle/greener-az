@@ -47,15 +47,15 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
   };
 
   return (
-    <Card className="shadow-xl border-0 bg-white/95 backdrop-blur">
+    <Card className="shadow-xl border-0 bg-white/95 backdrop-blur hover-lift transition-smooth">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center space-x-2">
-            <MapPin className="w-5 h-5 text-blue-600" />
-            <span>{county.name} County</span>
+            <MapPin className="w-5 h-5 text-blue-600 hover-scale transition-bounce" />
+            <span className="transition-smooth">{county.name} County</span>
             {county.isRealTime && (
-              <div className="flex items-center space-x-1">
-                <Activity className="w-4 h-4 text-green-600" />
+              <div className="flex items-center space-x-1 fade-in">
+                <Activity className="w-4 h-4 text-green-600 pulse-soft" />
                 <span className="text-xs text-green-600 font-medium">LIVE</span>
               </div>
             )}
@@ -64,7 +64,7 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="h-8 w-8"
+            className="h-8 w-8 hover:rotate-90 transition-all duration-300"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -76,82 +76,82 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
           {/* Column 1: Key Metrics */}
-          <div className="space-y-3">
+          <div className="space-y-3 fade-in-up stagger-1">
             <h4 className="font-semibold text-slate-900 text-sm">Key Metrics</h4>
             <div className="space-y-2">
-              <div>
+              <div className="transition-smooth hover:bg-blue-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Population</p>
-                <p className="text-lg font-bold text-slate-900">{formatNumber(county.population)}</p>
+                <p className="text-lg font-bold text-slate-900 transition-smooth">{formatNumber(county.population)}</p>
               </div>
-              <div>
+              <div className="transition-smooth hover:bg-green-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
                   {county.isRealTime ? 'Current Usage' : 'Annual Consumption'}
                 </p>
-                <p className="text-lg font-bold text-slate-900">
+                <p className="text-lg font-bold text-slate-900 transition-smooth">
                   {county.isRealTime && county.currentConsumption
                     ? formatNumber(county.currentConsumption) + ' MWh/yr'
                     : formatNumber(county.consumption_mwh) + ' MWh'
                   }
                 </p>
                 {county.isRealTime && (
-                  <p className="text-xs text-green-600">Live data</p>
+                  <p className="text-xs text-green-600 pulse-soft">Live data</p>
                 )}
               </div>
-              <div>
+              <div className="transition-smooth hover:bg-amber-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Per Capita Usage</p>
-                <p className="text-lg font-bold text-slate-900">{(county.consumption_per_capita || 0).toFixed(1)} MWh</p>
+                <p className="text-lg font-bold text-slate-900 transition-smooth">{(county.consumption_per_capita || 0).toFixed(1)} MWh</p>
               </div>
             </div>
           </div>
 
           {/* Column 2: Sustainability & Energy */}
-          <div className="space-y-3">
+          <div className="space-y-3 fade-in-up stagger-2">
             <h4 className="font-semibold text-slate-900 text-sm">Sustainability & Energy</h4>
             <div className="space-y-2">
-              <div>
+              <div className="transition-smooth hover:bg-emerald-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Sustainability Score</p>
                 <div className="flex items-center space-x-2 mt-1">
-                  <div className="flex-1 bg-slate-200 rounded-full h-2">
+                  <div className="flex-1 bg-slate-200 rounded-full h-2 hover-glow transition-smooth">
                     <div
-                      className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full"
+                      className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full transition-all duration-1000"
                       style={{ width: `${county.sustainability_score}%` }}
                     />
                   </div>
-                  <Badge className={`${getSustainabilityColor(county.sustainability_score)} text-xs`}>
+                  <Badge className={`${getSustainabilityColor(county.sustainability_score)} text-xs transition-bounce`}>
                     {county.sustainability_score}/100
                   </Badge>
                 </div>
               </div>
-              <div>
+              <div className="transition-smooth hover:bg-green-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Renewable Energy</p>
                 <div className="flex items-center space-x-2 mt-1">
-                  <Leaf className="w-4 h-4 text-green-600" />
-                  <span className="text-lg font-semibold text-slate-900">{county.renewable_percentage}%</span>
+                  <Leaf className="w-4 h-4 text-green-600 hover-scale transition-bounce" />
+                  <span className="text-lg font-semibold text-slate-900 transition-smooth">{county.renewable_percentage}%</span>
                 </div>
                 <p className="text-xs text-slate-600">({formatNumber(county.renewable_capacity_mw)} MW capacity)</p>
               </div>
-              <div>
+              <div className="transition-smooth hover:bg-yellow-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Avg. Residential Rate</p>
-                <p className="text-lg font-bold text-slate-900">{county.avg_residential_rate}¢/kWh</p>
+                <p className="text-lg font-bold text-slate-900 transition-smooth">{county.avg_residential_rate}¢/kWh</p>
               </div>
             </div>
           </div>
 
           {/* Column 3: Cities & Sources */}
-          <div className="space-y-3">
+          <div className="space-y-3 fade-in-up stagger-3">
             <h4 className="font-semibold text-slate-900 text-sm">Cities & Sources</h4>
             <div className="space-y-2">
-              <div>
+              <div className="transition-smooth hover:bg-blue-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Major Cities</p>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {county.major_cities?.slice(0, 3).map((city, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
+                    <Badge key={index} variant="outline" className={`text-xs hover-scale transition-bounce fade-in stagger-${index + 1}`}>
                       {city}
                     </Badge>
                   ))}
                 </div>
               </div>
-              <div>
+              <div className="transition-smooth hover:bg-orange-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Primary Energy Sources</p>
                 <div className="space-y-1 mt-1">
                   {county.primary_sources?.slice(0, 3).map((source, index) => {
@@ -164,38 +164,38 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
                     const Icon = icons[source] || Factory;
 
                     return (
-                      <div key={index} className="flex items-center space-x-2 text-xs">
-                        <Icon className="w-3 h-3 text-slate-600" />
+                      <div key={index} className={`flex items-center space-x-2 text-xs transition-smooth hover:scale-105 fade-in stagger-${index + 1}`}>
+                        <Icon className="w-3 h-3 text-slate-600 hover-scale transition-bounce" />
                         <span>{source}</span>
                       </div>
                     );
                   })}
                 </div>
               </div>
-              <div>
+              <div className="transition-smooth hover:bg-red-50 -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Carbon Emissions</p>
-                <p className="text-lg font-bold text-slate-900">{formatNumber(county.carbon_emissions_tons)} tons CO₂</p>
+                <p className="text-lg font-bold text-slate-900 transition-smooth">{formatNumber(county.carbon_emissions_tons)} tons CO₂</p>
               </div>
             </div>
           </div>
 
           {/* Column 4: Status & Actions */}
-          <div className="space-y-3">
+          <div className="space-y-3 fade-in-up stagger-4">
             <h4 className="font-semibold text-slate-900 text-sm">Status & Actions</h4>
             <div className="space-y-2">
 
               {/* Grid Status - Real-time only */}
               {county.isRealTime && county.gridStress && (
-                <div>
+                <div className="transition-smooth hover:bg-yellow-50 -mx-2 px-2 py-2 rounded-lg fade-in">
                   <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Grid Status</p>
                   <div className="flex items-center space-x-2 mt-1">
-                    <AlertTriangle className="w-3 h-3 text-slate-600" />
-                    <Badge className={`${getGridStressColor(county.gridStress)} text-xs`}>
+                    <AlertTriangle className="w-3 h-3 text-slate-600 hover-scale transition-bounce" />
+                    <Badge className={`${getGridStressColor(county.gridStress)} text-xs transition-bounce hover-scale`}>
                       {county.gridStress} Demand
                     </Badge>
                   </div>
                   {county.currentRenewableGeneration && (
-                    <p className="text-xs text-slate-600 mt-1">
+                    <p className="text-xs text-slate-600 mt-1 pulse-soft">
                       {formatNumber(county.currentRenewableGeneration)} MW renewable
                     </p>
                   )}
@@ -204,19 +204,19 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
 
               {/* Carbon Footprint Summary */}
               {county.carbonFootprint && (
-                <div className="bg-green-50 rounded-lg p-2">
+                <div className="bg-green-50 rounded-lg p-2 hover-lift transition-smooth fade-in stagger-1">
                   <div className="flex items-center space-x-1 mb-1">
-                    <Calculator className="w-3 h-3 text-green-600" />
+                    <Calculator className="w-3 h-3 text-green-600 hover-scale transition-bounce" />
                     <span className="text-xs font-medium text-green-900">Carbon Footprint</span>
                   </div>
                   <div className="text-xs space-y-1">
-                    <div>
+                    <div className="transition-smooth hover:bg-green-100 -mx-1 px-1 py-0.5 rounded">
                       <span className="text-green-700">Per person:</span>
                       <span className="font-semibold text-green-900 ml-1">
                         {county.carbonFootprint.perCapitaCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
                       </span>
                     </div>
-                    <div>
+                    <div className="transition-smooth hover:bg-green-100 -mx-1 px-1 py-0.5 rounded">
                       <span className="text-green-700">Per household:</span>
                       <span className="font-semibold text-green-900 ml-1">
                         {county.carbonFootprint.householdCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
@@ -228,19 +228,19 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
               )}
 
               {/* Quick Recommendations */}
-              <div className="bg-blue-50 rounded-lg p-2">
+              <div className="bg-blue-50 rounded-lg p-2 hover-lift transition-smooth fade-in stagger-2">
                 <h5 className="text-xs font-semibold text-blue-900 mb-1">Opportunities</h5>
                 <ul className="text-xs text-blue-800 space-y-0.5">
                   {county.renewable_percentage < 30 && (
-                    <li>• Increase solar capacity</li>
+                    <li className="transition-smooth hover:bg-blue-100 -mx-1 px-1 py-0.5 rounded">• Increase solar capacity</li>
                   )}
                   {county.consumption_per_capita > 15 && (
-                    <li>• Energy efficiency programs</li>
+                    <li className="transition-smooth hover:bg-blue-100 -mx-1 px-1 py-0.5 rounded">• Energy efficiency programs</li>
                   )}
                   {county.carbon_emissions_tons > 1000000 && (
-                    <li>• Transition to renewables</li>
+                    <li className="transition-smooth hover:bg-blue-100 -mx-1 px-1 py-0.5 rounded">• Transition to renewables</li>
                   )}
-                  <li>• Expand solar incentives</li>
+                  <li className="transition-smooth hover:bg-blue-100 -mx-1 px-1 py-0.5 rounded">• Expand solar incentives</li>
                 </ul>
               </div>
             </div>

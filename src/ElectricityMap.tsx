@@ -42,6 +42,13 @@ export default function ElectricityMap() {
   const [showCarbonModal, setShowCarbonModal] = useState<boolean>(false);
   const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
 
+  const formatNumber = (num: number | undefined): string => {
+    if (typeof num !== 'number' || isNaN(num)) return 'N/A';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toFixed(0);
+  };
+
   useEffect(() => {
     loadElectricityData();
   }, []);
@@ -446,11 +453,19 @@ export default function ElectricityMap() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+        <div className="text-center space-y-4 fade-in">
+          <div className="relative mx-auto">
+            <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+            <div className="absolute inset-0 w-12 h-12 border-4 border-emerald-300 border-t-transparent rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+          </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-slate-800">Loading Arizona Electricity Data</h3>
-            <p className="text-slate-600">Fetching real-time consumption and sustainability metrics...</p>
+            <h3 className="text-xl font-semibold text-slate-800 fade-in-up stagger-1">Loading Arizona Electricity Data</h3>
+            <p className="text-slate-600 fade-in-up stagger-2">Fetching real-time consumption and sustainability metrics...</p>
+            <div className="flex justify-center space-x-1 mt-4">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            </div>
           </div>
         </div>
       </div>
@@ -459,11 +474,11 @@ export default function ElectricityMap() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 fixed top-0 left-0 w-full z-50" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 fixed top-0 left-0 w-full z-50 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center">
+            <div className="flex items-center space-x-3 slide-in-left">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center hover-scale transition-bounce">
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -472,34 +487,36 @@ export default function ElectricityMap() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 slide-in-right">
               {/* Real-time Status Indicator */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 transition-smooth">
                 {isRealTimeConnected && !isUsingFallback ? (
                   <>
-                    <Wifi className="w-4 h-4 text-green-600" />
+                    <Wifi className="w-4 h-4 text-green-600 transition-smooth" />
                     <div className="flex items-center space-x-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-green-500 rounded-full pulse-soft"></div>
                       <span className="text-sm text-green-700 font-medium">Live</span>
                     </div>
                   </>
                 ) : isUsingFallback ? (
                   <>
-                    <WifiOff className="w-4 h-4 text-amber-500" />
+                    <WifiOff className="w-4 h-4 text-amber-500 transition-smooth" />
                     <span className="text-sm text-amber-600">Fallback</span>
                   </>
                 ) : (
                   <>
-                    <WifiOff className="w-4 h-4 text-gray-400" />
+                    <WifiOff className="w-4 h-4 text-gray-400 transition-smooth" />
                     <span className="text-sm text-gray-500">Static</span>
                   </>
                 )}
               </div>
 
-              <MapControls
-                mapStyle={mapStyle}
-                setMapStyle={setMapStyle}
-              />
+              <div className="fade-in stagger-2">
+                <MapControls
+                  mapStyle={mapStyle}
+                  setMapStyle={setMapStyle}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -507,32 +524,38 @@ export default function ElectricityMap() {
 
       <div className="max-w-7xl mx-auto p-6 pt-24">
         {mapData && (
-          <StatsOverview 
-            data={mapData.state_totals}
-            counties={mapData.counties}
-          />
+          <div className="fade-in-up stagger-1">
+            <StatsOverview
+              data={mapData.state_totals}
+              counties={mapData.counties}
+            />
+          </div>
         )}
 
         <div className="space-y-6 mt-6">
           {/* Carbon Footprint Card - Horizontal Layout */}
           {showPanel && selectedCounty && (
-            <CarbonFootprintCard
-              county={selectedCounty}
-              onShowModal={() => setShowCarbonModal(true)}
-            />
+            <div className="slide-in-right">
+              <CarbonFootprintCard
+                county={selectedCounty}
+                onShowModal={() => setShowCarbonModal(true)}
+              />
+            </div>
           )}
 
           {/* County Details Card - Horizontal Layout */}
           {showPanel && selectedCounty && (
-            <CountyDetailsPanel
-              county={selectedCounty}
-              onClose={() => setShowPanel(false)}
-            />
+            <div className="slide-in-left stagger-1">
+              <CountyDetailsPanel
+                county={selectedCounty}
+                onClose={() => setShowPanel(false)}
+              />
+            </div>
           )}
 
           {/* Map - Full Width */}
-          <div>
-            <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur">
+          <div className="fade-in-scale stagger-2">
+            <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur hover-lift">
               <CardContent className="p-0">
                 <div className="h-[600px] relative">
                   <MapContainer
@@ -561,7 +584,7 @@ export default function ElectricityMap() {
                         <CircleMarker
                           key={index}
                           center={[county.coordinates.lat, county.coordinates.lng]}
-                          pathOptions={{ 
+                          pathOptions={{
                             fillColor: getColorByValue(value, mapStyle),
                             color: 'white',
                             weight: 2,
@@ -573,12 +596,33 @@ export default function ElectricityMap() {
                             click: () => {
                               handleCountyClick(county);
                             },
+                            mouseover: (e) => {
+                              const marker = e.target;
+                              marker.setStyle({
+                                weight: 3,
+                                fillOpacity: 1,
+                                color: '#3b82f6'
+                              });
+                            },
+                            mouseout: (e) => {
+                              const marker = e.target;
+                              marker.setStyle({
+                                weight: 2,
+                                fillOpacity: 0.8,
+                                color: 'white'
+                              });
+                            }
                           }}
                         >
                           <Tooltip>
-                            <div className="p-1">
-                              <h4 className="font-bold text-slate-800">{county.name} County</h4>
-                              <p className="text-sm text-slate-600">Click to see details</p>
+                            <div className="p-2 bg-white/95 backdrop-blur rounded-lg shadow-lg border-0">
+                              <h4 className="font-bold text-slate-800 mb-1">{county.name} County</h4>
+                              <div className="text-xs text-slate-600 space-y-0.5">
+                                <p>Population: {formatNumber(county.population)}</p>
+                                <p>Consumption: {formatNumber(county.consumption_mwh)} MWh</p>
+                                <p>Renewable: {county.renewable_percentage}%</p>
+                              </div>
+                              <p className="text-xs text-blue-600 mt-2 font-medium">Click for details →</p>
                             </div>
                           </Tooltip>
                         </CircleMarker>
@@ -595,12 +639,14 @@ export default function ElectricityMap() {
           </div>
         </div>
 
-        <DataSources
-          sources={mapData?.data_sources}
-          lastUpdated={lastUpdated || undefined}
-          isRealTime={isRealTimeConnected}
-          isUsingFallback={isUsingFallback}
-        />
+        <div className="fade-in-up stagger-3">
+          <DataSources
+            sources={mapData?.data_sources}
+            lastUpdated={lastUpdated || undefined}
+            isRealTime={isRealTimeConnected}
+            isUsingFallback={isUsingFallback}
+          />
+        </div>
       </div>
 
       {/* Carbon Reduction Modal - Full Page Overlay */}
