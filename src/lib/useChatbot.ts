@@ -7,7 +7,7 @@ function sleep(ms: number) {
 }
 
 const MOCK_RESPONSES = [
-  "Hi — I'm Catina! I can help with the map, county stats, or carbon footprint questions. What would you like to explore today?",
+  "Hi — I'm Cactina! I can help with the map, county stats, or carbon footprint questions. What would you like to explore today?",
 ]
 
 function addPersonality(text: string) {
