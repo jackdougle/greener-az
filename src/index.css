@@ -100,7 +100,7 @@
     --panel-alpha: 0.7;
     /* slightly brighter green for dark mode so border reads on dark backgrounds */
     --panel-border: 340 100% 8%;
-    --map-tint-alpha: 0.05;
+    --map-tint-alpha: 0.15;
 
     /* Special card colors for dark mode */
     --clean-energy-bg: 142 60% 15%;
@@ -157,6 +157,11 @@
     z-index: 450;
   }
 
+  /* Dark mode overlay - use a more subtle dark tint */
+  :root.dark .map-tint::after {
+    background: rgba(226, 29, 112, 0.07); /* very subtle dark blue overlay for dark mode */
+  }
+
   /* Force Leaflet tile images to be shifted green in light mode. Using !important
      to ensure the filter takes effect over any inline styles produced by Leaflet. */
   .map-tint .leaflet-tile {
@@ -169,9 +174,9 @@
     filter: hue-rotate(60deg) saturate(1.12) brightness(1) !important;
   }
 
-  /* Dark mode: keep the original dark tiles (no green shift) */
+  /* Dark mode: enhance dark tiles for better contrast and subtle tinting */
   :root.dark .map-tint .leaflet-tile {
-    filter: none !important;
+    filter: brightness(1.1) contrast(1.05) saturate(0.8) !important;
   }
 
   /* Leaflet tooltip styling for dark mode */

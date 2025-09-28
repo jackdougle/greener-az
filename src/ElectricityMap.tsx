@@ -31,6 +31,7 @@ import CarbonReductionModal from './components/CarbonReductionModal';
 import StatsOverview from './components/map/StatsOverview';
 import MapControls from './components/map/MapControls';
 import DataSources from './components/DataSources';
+import TimeData from './components/TimeData';
 import ApiConfigurationNotice from './components/ApiConfigurationNotice';
 import { realTimeDataService } from './services/RealTimeDataService';
 
@@ -45,6 +46,9 @@ export default function ElectricityMap() {
   const [showCarbonModal, setShowCarbonModal] = useState<boolean>(false);
   const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
   const [dataSourceInfo, setDataSourceInfo] = useState(realTimeDataService.getDataSourceInfo());
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    return document.documentElement.classList.contains('dark');
+  });
 
   const formatNumber = (num: number | undefined): string => {
     if (typeof num !== 'number' || isNaN(num)) return 'N/A';
@@ -96,6 +100,25 @@ export default function ElectricityMap() {
       setDataSourceInfo(realTimeDataService.getDataSourceInfo());
     }
   }, [realTimeData]);
+
+  // Listen for theme changes to update map tiles
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          setIsDarkMode(isDark);
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   // Helper function to enrich counties with carbon footprint estimates
   const enrichCountiesWithCarbonFootprint = (counties: County[]): County[] => {
@@ -429,22 +452,23 @@ export default function ElectricityMap() {
 
   return (
     <div className="min-h-screen">
-      <header className="bg-card/80 backdrop-blur-md border-b border-border fixed top-0 left-0 w-full z-50 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
+      <header className="bg-card/50 backdrop-blur-md border-b border-border fixed top-0 left-0 w-full z-86 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 slide-in-left">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center hover-scale transition-bounce">
-                <Zap className="w-6 h-6 text-white" />
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center hover-scale transition-bounce ${
+                isDarkMode
+                  ? 'bg-gradient-to-r from-pink-800 to-pink-950'
+                  : 'bg-gradient-to-r from-green-300 to-lime-400'
+              }`}>
+                <Zap className="w-8 h-8 text-white" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">Arizona Energy Map</h1>
                 <p className="text-sm text-foreground/80">Interactive electricity usage & sustainability insights</p>
               </div>
             </div>
-            
-            <div className="flex items-center space-x-4 slide-in-right">
-              {/* Theme Toggle */}
-              <ThemeToggle />
+            <div className="flex items-center space-x-6 slide-in-right">
 
               {/* Real-time Status Indicator */}
               <div className="flex items-center space-x-2 transition-smooth">
@@ -475,6 +499,8 @@ export default function ElectricityMap() {
                   setMapStyle={setMapStyle}
                 />
               </div>
+              {/* Theme Toggle */}
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -531,7 +557,10 @@ export default function ElectricityMap() {
                     zoomControl={false}
                   >
                     <TileLayer
-                      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                      url={isDarkMode 
+                        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                        : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                      }
                       attribution="&copy; OpenStreetMap &copy; CARTO"
                     />
                     
@@ -603,6 +632,10 @@ export default function ElectricityMap() {
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        <div className="fade-in-up stagger-3">
+          <TimeData selectedCounty={selectedCounty} />
         </div>
 
         <div className="fade-in-up stagger-3">
