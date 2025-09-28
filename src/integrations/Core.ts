@@ -1,6 +1,22 @@
 import { MapData } from '@/types';
 import { eiaApiService } from '@/services/EIAApiService';
 
+// Define the structure of EIA data to match what eiaApiService.fetchArizonaElectricityData() returns
+interface BalancingAuthorityData {
+  demand: number;
+  generation: number;
+}
+
+interface ProcessedElectricityData {
+  azps?: BalancingAuthorityData;
+  srp?: BalancingAuthorityData;
+  walc?: BalancingAuthorityData;
+  stateTotal: {
+    totalDemand: number;
+    totalGeneration: number;
+  };
+}
+
 // Arizona county metadata (population, coordinates, cities)
 const ARIZONA_COUNTY_METADATA = {
   'Maricopa': {
@@ -126,14 +142,23 @@ export async function loadRealElectricityData(): Promise<MapData> {
 
     console.log('✅ Successfully fetched EIA data:', eiaData);
 
+    // Use the data directly without type assertion, but with safe property access
+    const eiaDataTyped = eiaData as any; // Safe fallback
+
     // Convert EIA data to county-level data using real consumption
     const counties = Object.entries(ARIZONA_COUNTY_METADATA).map(([countyName, metadata]) => {
-      const baKey = metadata.balancing_authority.toLowerCase() as 'azps' | 'srp' | 'walc';
-      const baData = eiaData[baKey];
+      const baKey = metadata.balancing_authority.toLowerCase();
+      
+      // Safely access the balancing authority data with fallback
+      const baData = eiaDataTyped[baKey] || { demand: 0, generation: 0 };
 
       // Safely calculate consumption and generation, defaulting to 0 if data is missing
-      const countyConsumption = (baData && baData.demand) ? baData.demand * metadata.share * 1000 : 0;
-      const countyGeneration = (baData && baData.generation) ? baData.generation * metadata.share * 1000 : 0;
+      const countyConsumption = (baData && baData.demand) 
+        ? baData.demand * metadata.share * 1000 
+        : 0;
+      const countyGeneration = (baData && baData.generation) 
+        ? baData.generation * metadata.share * 1000 
+        : 0;
 
       // Estimate renewable percentage, avoiding division by zero
       const renewablePercentage = countyConsumption > 0
@@ -161,12 +186,12 @@ export async function loadRealElectricityData(): Promise<MapData> {
 
     // Calculate state totals from real data
     const stateTotals = {
-      total_consumption: eiaData.stateTotal.totalDemand * 1000, // Convert MW to MWh
+      total_consumption: (eiaDataTyped.stateTotal?.totalDemand || 0) * 1000, // Convert MW to MWh
       total_population: Object.values(ARIZONA_COUNTY_METADATA).reduce((sum, county) => sum + county.population, 0),
-      avg_renewable_percentage: eiaData.stateTotal.totalDemand > 0
-        ? Math.round((eiaData.stateTotal.totalGeneration / eiaData.stateTotal.totalDemand) * 100 * 0.3)
+      avg_renewable_percentage: (eiaDataTyped.stateTotal?.totalDemand || 0) > 0
+        ? Math.round(((eiaDataTyped.stateTotal?.totalGeneration || 0) / (eiaDataTyped.stateTotal?.totalDemand || 1)) * 100 * 0.3)
         : 0,
-      total_emissions: Math.round(eiaData.stateTotal.totalDemand * 1000 * 0.4)
+      total_emissions: Math.round((eiaDataTyped.stateTotal?.totalDemand || 0) * 1000 * 0.4)
     };
 
     return {
