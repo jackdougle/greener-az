@@ -7,7 +7,7 @@
     "dev": "concurrently \"npm run server\" \"vite\" --names \"API,WEB\" --prefix name",
     "dev:frontend": "vite",
     "dev:backend": "npm run server",
-    "server": "cd server && export $(cat ../.env.local | xargs) && npm start",
+    "server": "cd server && npm start",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
