@@ -119,6 +119,16 @@ npm run build
 npm run preview
 ```
 
+### Local chat proxy (optional)
+
+If you want to test chat end-to-end locally, there's a simple example proxy in `server/`.
+
+1. cd server && npm install
+2. Create a `.env` with OPENAI_API_KEY
+3. npm run dev
+
+By default the frontend fetches `/api/chat`. In dev you can run the proxy on port 4000 and configure Vite to proxy `/api/chat` to `http://localhost:4000` (edit `vite.config.ts`).
+
 ### TypeScript Commands
 ```bash
 npm run type-check  # Type checking without emission
