@@ -131,7 +131,7 @@ export default function ChatbotWidget() {
               title="Drag to move"
             >
               <img src="/assets/char.gif" alt="assistant" className="w-16 h-16 rounded-full" />
-              <div className="font-semibold text-lg">Catina (AI)</div>
+              <div className="font-semibold text-lg">Cactina (AI)</div>
               <div className="ml-auto text-sm text-slate-500">online</div>
             </div>
 
