@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, ZoomControl, CircleMarker, Tooltip } from 'react-leaflet';
+// Avoid importing Leaflet types directly in this environment; use local alias
+type LatLngExpression = any
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -432,8 +434,8 @@ export default function ElectricityMap() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 slide-in-left">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center hover-scale transition-bounce">
-                <Zap className="w-6 h-6 text-white" />
+              <div className="rounded-xl flex items-center justify-center hover-scale transition-bounce">
+                <img src="/assets/char.gif" alt="site mascot" className="w-12 h-12 md:w-14 md:h-14 rounded-lg" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">Arizona Energy Map</h1>
@@ -520,17 +522,10 @@ export default function ElectricityMap() {
             <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur hover-lift">
               <CardContent className="p-0">
                 <div className="h-[600px] relative">
-                  <MapContainer
-                    center={[34.0489, -111.0937]}
-                    zoom={7}
-                    style={{ height: '100%', width: '100%' }}
-                    zoomControl={false}
-                  >
-                    <TileLayer
-                      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                      attribution="&copy; OpenStreetMap &copy; CARTO"
-                    />
-                    
+                  <MapContainer {...({ center: [34.0489, -111.0937] as LatLngExpression, zoom: 7, style: { height: '100%', width: '100%' }, zoomControl: false } as any)}>
+                    {/* cast to any to avoid strict react-leaflet typing issues for TileLayer props */}
+                    <TileLayer {...({ url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", attribution: "&copy; OpenStreetMap &copy; CARTO" } as any)} />
+
                     {mapData?.counties.map((county, index) => {
                       if (!county.coordinates || typeof county.coordinates.lat !== 'number' || typeof county.coordinates.lng !== 'number') {
                         return null;
@@ -543,39 +538,34 @@ export default function ElectricityMap() {
                       const radius = Math.max(8, Math.sqrt(county.consumption_mwh / 20000));
 
                       return (
-                        <CircleMarker
-                          key={index}
-                          center={[county.coordinates.lat, county.coordinates.lng]}
-                          pathOptions={{
-                            fillColor: getColorByValue(value, mapStyle),
-                            color: 'white',
-                            weight: 2,
-                            opacity: 1,
-                            fillOpacity: 0.8
-                          }}
-                          radius={radius}
-                          eventHandlers={{
-                            click: () => {
-                              handleCountyClick(county);
-                            },
-                            mouseover: (e) => {
-                              const marker = e.target;
-                              marker.setStyle({
-                                weight: 3,
-                                fillOpacity: 1,
-                                color: '#3b82f6'
-                              });
-                            },
-                            mouseout: (e) => {
-                              const marker = e.target;
-                              marker.setStyle({
-                                weight: 2,
-                                fillOpacity: 0.8,
-                                color: 'white'
-                              });
-                            }
-                          }}
-                        >
+                        // cast props to any to satisfy strict TS setups for react-leaflet
+                        <CircleMarker {...({ key: index, center: [county.coordinates.lat, county.coordinates.lng], pathOptions: {
+                          fillColor: getColorByValue(value, mapStyle),
+                          color: 'white',
+                          weight: 2,
+                          opacity: 1,
+                          fillOpacity: 0.8
+                        }, radius, eventHandlers: {
+                          click: () => {
+                            handleCountyClick(county);
+                          },
+                          mouseover: (e: any) => {
+                            const marker = e.target;
+                            marker.setStyle({
+                              weight: 3,
+                              fillOpacity: 1,
+                              color: '#3b82f6'
+                            });
+                          },
+                          mouseout: (e: any) => {
+                            const marker = e.target;
+                            marker.setStyle({
+                              weight: 2,
+                              fillOpacity: 0.8,
+                              color: 'white'
+                            });
+                          }
+                        } } as any)}>
                           <Tooltip>
                             <div className="p-2 bg-white/95 backdrop-blur rounded-lg shadow-lg border-0">
                               <h4 className="font-bold text-slate-800 mb-1">{county.name} County</h4>
@@ -593,10 +583,9 @@ export default function ElectricityMap() {
                     
                     <ZoomControl position="topright" />
                   </MapContainer>
-                  
-                  <MapLegend mapStyle={mapStyle} />
                 </div>
               </CardContent>
+              <MapLegend mapStyle={mapStyle} />
             </Card>
           </div>
         </div>
