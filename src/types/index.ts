@@ -123,6 +123,8 @@ export interface ConnectionStatus {
   isConnected: boolean;
   subscriberCount: number;
   lastUpdate: string;
+  usingRealApi?: boolean;
+  apiConfigured?: boolean;
 }
 
 export interface UseRealTimeDataReturn {
@@ -133,8 +135,3 @@ export interface UseRealTimeDataReturn {
 // Utility types
 export type MapStyleType = 'consumption' | 'renewable' | 'sustainability';
 
-export interface InvokeLLMParams {
-  prompt: string;
-  add_context_from_internet?: boolean;
-  response_json_schema?: object;
-}

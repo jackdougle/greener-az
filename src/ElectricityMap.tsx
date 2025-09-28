@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, ZoomControl, CircleMarker, Tooltip } from 'rea
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { InvokeLLM } from '@/integrations/Core';
+import { loadRealElectricityData } from '@/integrations/Core';
 import { useRealTimeData } from './services/RealTimeDataService';
 import { CarbonFootprintService } from './services/CarbonFootprintService';
 import { MapData, County, MapStyleType } from '@/types';
@@ -30,6 +30,8 @@ import CarbonReductionModal from './components/CarbonReductionModal';
 import StatsOverview from './components/map/StatsOverview';
 import MapControls from './components/map/MapControls';
 import DataSources from './components/DataSources';
+import ApiConfigurationNotice from './components/ApiConfigurationNotice';
+import { realTimeDataService } from './services/RealTimeDataService';
 
 export default function ElectricityMap() {
   const [mapData, setMapData] = useState<MapData | null>(null);
@@ -41,6 +43,7 @@ export default function ElectricityMap() {
   const [isUsingFallback, setIsUsingFallback] = useState<boolean>(false);
   const [showCarbonModal, setShowCarbonModal] = useState<boolean>(false);
   const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
+  const [dataSourceInfo, setDataSourceInfo] = useState(realTimeDataService.getDataSourceInfo());
 
   const formatNumber = (num: number | undefined): string => {
     if (typeof num !== 'number' || isNaN(num)) return 'N/A';
@@ -87,6 +90,9 @@ export default function ElectricityMap() {
 
       setMapData(updatedMapData);
       setLastUpdated(new Date(realTimeData.timestamp).toLocaleString());
+
+      // Update data source info
+      setDataSourceInfo(realTimeDataService.getDataSourceInfo());
     }
   }, [realTimeData]);
 
@@ -337,70 +343,18 @@ export default function ElectricityMap() {
   const loadElectricityData = async () => {
     setLoading(true);
     try {
-      const response = await InvokeLLM({
-        prompt: `I need comprehensive and accurate 2023 electricity data for all Arizona counties. Please provide REAL data from credible sources like EIA, Arizona Corporation Commission, APS, and TEP reports. For each of Arizona's 15 counties, provide realistic consumption data with proper coordinates.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            counties: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  consumption_mwh: { type: "number" },
-                  population: { type: "number" },
-                  major_cities: { type: "array", items: { type: "string" } },
-                  renewable_percentage: { type: "number" },
-                  avg_residential_rate: { type: "number" },
-                  primary_sources: { type: "array", items: { type: "string" } },
-                  sustainability_score: { type: "number" },
-                  carbon_emissions_tons: { type: "number" },
-                  coordinates: {
-                    type: "object",
-                    properties: {
-                      lat: { type: "number" },
-                      lng: { type: "number" }
-                    }
-                  },
-                  consumption_per_capita: { type: "number" },
-                  renewable_capacity_mw: { type: "number" }
-                }
-              }
-            },
-            state_totals: {
-              type: "object",
-              properties: {
-                total_consumption: { type: "number" },
-                total_population: { type: "number" },
-                avg_renewable_percentage: { type: "number" },
-                total_emissions: { type: "number" }
-              }
-            },
-            data_sources: {
-              type: "array",
-              items: { type: "string" }
-            }
-          }
-        }
-      });
+      console.log('🔄 Loading real EIA electricity data...');
+      const response = await loadRealElectricityData();
 
-      if (!response.counties || response.counties.length === 0) {
-        const fallbackData = getFallbackArizonaData();
-        fallbackData.counties = enrichCountiesWithCarbonFootprint(fallbackData.counties);
-        setMapData(fallbackData);
-        setIsUsingFallback(true);
-      } else {
-        const enrichedResponse = {
-          ...response,
-          counties: enrichCountiesWithCarbonFootprint(response.counties)
-        };
-        setMapData(enrichedResponse);
-        setIsUsingFallback(false);
-      }
+      const enrichedResponse = {
+        ...response,
+        counties: enrichCountiesWithCarbonFootprint(response.counties)
+      };
+      setMapData(enrichedResponse);
+      setIsUsingFallback(false);
+      console.log('✅ Successfully loaded real electricity data');
     } catch (error) {
-      console.error('Error loading electricity data:', error);
+      console.error('❌ Error loading real electricity data, using fallback:', error);
       const fallbackData = getFallbackArizonaData();
       fallbackData.counties = enrichCountiesWithCarbonFootprint(fallbackData.counties);
       setMapData(fallbackData);
@@ -523,6 +477,14 @@ export default function ElectricityMap() {
       </header>
 
       <div className="max-w-7xl mx-auto p-6 pt-24">
+        {/* API Configuration Notice */}
+        <div className="mb-6 fade-in">
+          <ApiConfigurationNotice
+            isApiConfigured={dataSourceInfo.isApiConfigured}
+            isUsingRealApi={dataSourceInfo.isUsingRealApi}
+          />
+        </div>
+
         {mapData && (
           <div className="fade-in-up stagger-1">
             <StatsOverview
