@@ -23,7 +23,6 @@ import {
   WifiOff
 } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
-import { LatLngExpression, LeafletMouseEvent } from 'leaflet';
 
 import MapLegend from './components/map/MapLegend';
 import CountyDetailsPanel from './components/map/CountyDetailsPanel';
@@ -593,7 +592,7 @@ export default function ElectricityMap() {
                             click: () => {
                               handleCountyClick(county);
                             },
-                            mouseover: (e: LeafletMouseEvent) => {
+                            mouseover: (e: any) => {
                               const marker = e.target;
                               marker.setStyle({
                                 weight: 3,
@@ -601,7 +600,7 @@ export default function ElectricityMap() {
                                 color: '#3b82f6'
                               });
                             },
-                            mouseout: (e: LeafletMouseEvent) => {
+                            mouseout: (e: any) => {
                               const marker = e.target;
                               marker.setStyle({
                                 weight: 2,
