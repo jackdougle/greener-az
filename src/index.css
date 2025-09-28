@@ -28,6 +28,7 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 210 40% 15%;
+    --light-accent: 327 87% 82%;
     --radius: 0.5rem;
   }
 }
@@ -57,6 +58,7 @@
     --border: 216 12% 18%;
     --input: 216 12% 14%;
     --ring: 200 100% 60%;
+    --light-accent: 335 77% 42%;
     --radius: 0.5rem;
   }
 
@@ -139,7 +141,7 @@
 
     /* Special card colors for Opportunities */
     --opportunities-bg: 220 100% 97%;
-    --opportunities-border: 220 100% 85%;
+    --opportunities-border: 322 90% 90%;
 
     /* Special card colors for Arizona Tips/Info */
     --arizona-tips-bg: 200 100% 97%;
@@ -151,20 +153,20 @@
     --panel-alpha: 0.7;
     /* slightly brighter green for dark mode so border reads on dark backgrounds */
     --panel-border: 340 100% 8%;
-    --map-tint-alpha: 0.05;
+    --map-tint-alpha: 0.15;
 
-    /* Special card colors for dark mode */
+    /* Special card colors for dark mode - remove blue tints */
     --clean-energy-bg: 142 60% 15%;
     --clean-energy-border: 142 60% 25%;
 
-    --reduce-impact-bg: 210 80% 15%;
-    --reduce-impact-border: 210 80% 25%;
+    --reduce-impact-bg: 327 60% 20;
+    --reduce-impact-border: 340 60% 25%;
 
-    --opportunities-bg: 220 80% 15%;
-    --opportunities-border: 220 80% 25%;
+    --opportunities-bg: 327 60% 20;
+    --opportunities-border: 327 60% 25%;
 
-    --arizona-tips-bg: 200 80% 15%;
-    --arizona-tips-border: 200 80% 25%;
+    --arizona-tips-bg: 327 60% 15%;
+    --arizona-tips-border: 327 60% 25%;
   }
 
   /* Override Tailwind-generated utility colors for card/popover to include alpha.
@@ -208,6 +210,11 @@
     z-index: 450;
   }
 
+  /* Dark mode overlay - use a more subtle dark tint */
+  :root.dark .map-tint::after {
+    background: rgba(226, 29, 112, 0.07); /* very subtle dark blue overlay for dark mode */
+  }
+
   /* Force Leaflet tile images to be shifted green in light mode. Using !important
      to ensure the filter takes effect over any inline styles produced by Leaflet. */
   .map-tint .leaflet-tile {
@@ -220,9 +227,9 @@
     filter: hue-rotate(60deg) saturate(1.12) brightness(1) !important;
   }
 
-  /* Dark mode: keep the original dark tiles (no green shift) */
+  /* Dark mode: enhance dark tiles for better contrast and subtle tinting */
   :root.dark .map-tint .leaflet-tile {
-    filter: none !important;
+    filter: brightness(1.1) contrast(1.05) saturate(0.8) !important;
   }
 
   /* Leaflet tooltip styling for dark mode */

@@ -53,7 +53,7 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
     },
     {
       title: 'Carbon Emissions',
-      value: formatNumber(data?.total_emissions || 0) + ' tons',
+      value: formatNumber(data?.total_emissions || 0) + ' Tons',
       icon: TrendingDown,
       gradient: 'from-red-500 to-red-600',
       description: 'Annual CO₂ output'
