@@ -467,12 +467,7 @@ export default function ElectricityMap() {
                 )}
               </div>
 
-              <div className="fade-in stagger-2">
-                <MapControls
-                  mapStyle={mapStyle}
-                  setMapStyle={setMapStyle}
-                />
-              </div>
+              {/* map controls moved into the map container for corner placement */}
             </div>
           </div>
         </div>
@@ -583,6 +578,11 @@ export default function ElectricityMap() {
                     
                     <ZoomControl position="topright" />
                   </MapContainer>
+
+                  {/* map corner controls moved outside the MapContainer to ensure they render above Leaflet panes */}
+                  <div className="absolute top-3 right-3 z-[99999] pointer-events-auto">
+                    <MapControls mapStyle={mapStyle} setMapStyle={setMapStyle} />
+                  </div>
                 </div>
               </CardContent>
               <MapLegend mapStyle={mapStyle} />

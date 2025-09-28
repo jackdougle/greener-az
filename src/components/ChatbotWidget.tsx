@@ -13,6 +13,7 @@ export default function ChatbotWidget() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
+  const [isThinking, setIsThinking] = useState(false)
   const bottomRef = useRef<HTMLDivElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
 
@@ -23,7 +24,7 @@ export default function ChatbotWidget() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, open])
+  }, [messages, open, isThinking])
 
   useEffect(() => {
     function onMove(e: MouseEvent | TouchEvent) {
@@ -86,11 +87,14 @@ export default function ChatbotWidget() {
     const userMsg: Message = { id: String(Date.now()), role: 'user', text: input }
     setMessages((m) => [...m, userMsg])
     setInput('')
+    setIsThinking(true)
     try {
       const reply = await sendMessage(userMsg.text)
+      setIsThinking(false)
       const botMsg: Message = { id: String(Date.now() + 1), role: 'bot', text: reply }
       setMessages((m) => [...m, botMsg])
     } catch (err) {
+      setIsThinking(false)
       const errMsg: Message = { id: String(Date.now() + 2), role: 'bot', text: 'Sorry, something went wrong.' }
       setMessages((m) => [...m, errMsg])
     }
@@ -116,7 +120,10 @@ export default function ChatbotWidget() {
           className="fixed z-50 w-80 max-w-full"
           style={pos ? { left: pos.left, top: pos.top } : { right: 24, bottom: 96 }}
         >
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col" style={{ minHeight: 320 }}>
+          <div
+            className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col"
+            style={{ minHeight: 320, maxHeight: '60vh' }}
+          >
             <div
               className="flex items-center gap-4 p-3 border-b cursor-move"
               onMouseDown={startDrag}
@@ -128,11 +135,11 @@ export default function ChatbotWidget() {
               <div className="ml-auto text-sm text-slate-500">online</div>
             </div>
 
-            <div className="p-3 flex-1 overflow-auto" data-testid="chat-history">
+            <div className="p-3 flex-1 overflow-auto chat-scrollbar" data-testid="chat-history">
               {messages.length === 0 && <div className="text-sm text-slate-500">Say hi 👋</div>}
               {messages.map((m) => (
                 <div key={m.id} className={`my-2 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  {m.role === 'bot' && <img src="/assets/char.gif" alt="assistant" className="w-14 h-14 rounded-full mr-3" />}
+                  {m.role === 'bot' && <img src="/assets/char-speaking.gif" alt="assistant" className="w-14 h-14 rounded-full mr-3" />}
                   <div
                     className={`px-3 py-2 rounded-lg max-w-[70%] text-sm ${
                       m.role === 'user' ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-800'
@@ -142,6 +149,20 @@ export default function ChatbotWidget() {
                   </div>
                 </div>
               ))}
+              {isThinking && (
+                <div className="my-2 flex justify-start">
+                  <img src="/assets/char-speaking.gif" alt="assistant" className="w-14 h-14 rounded-full mr-3" />
+                  <div className="px-3 py-2 rounded-lg max-w-[70%] text-sm bg-slate-100 text-slate-800">
+                    <div className="typing-bubble">
+                      <div className="typing-dots">
+                        <span />
+                        <span />
+                        <span />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div ref={bottomRef} />
             </div>
 
