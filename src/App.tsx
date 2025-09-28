@@ -4,8 +4,10 @@ import './index.css'
 
 function App() {
   return (
-    <div className="App">
-      <ElectricityMap />
+    <div className="App min-h-screen">
+      <main>
+        <ElectricityMap />
+      </main>
     </div>
   )
 }

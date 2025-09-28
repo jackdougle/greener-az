@@ -27,6 +27,7 @@ import CountyDetailsPanel from './components/map/CountyDetailsPanel';
 import StatsOverview from './components/map/StatsOverview';
 import MapControls from './components/map/MapControls';
 import DataSources from './components/DataSources';
+import ThemeToggle from './components/ui/ThemeToggle';
 
 export default function ElectricityMap() {
   const [mapData, setMapData] = useState<MapData | null>(null);
@@ -37,6 +38,21 @@ export default function ElectricityMap() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [isUsingFallback, setIsUsingFallback] = useState<boolean>(false);
   const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
+  const [isDarkTheme, setIsDarkTheme] = useState<boolean>(() =>
+    typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : false
+  );
+  // Map tile tint presets (applied as CSS filters to a wrapper around the TileLayer)
+  const tileTintPresets = [
+    { name: 'None', filter: 'none' },
+    { name: 'Blue', filter: 'hue-rotate(190deg) saturate(1.2) brightness(0.95)' },
+    { name: 'Purple', filter: 'hue-rotate(260deg) saturate(1.25) brightness(0.95)' },
+    { name: 'Teal', filter: 'hue-rotate(150deg) saturate(1.15) brightness(0.95)' },
+    { name: 'Sepia', filter: 'sepia(0.45) saturate(0.8) contrast(0.95)' }
+  ];
+  const [tileTintIndex, setTileTintIndex] = useState<number>(0);
+  const tileFilter = tileTintPresets[tileTintIndex].filter;
+
+  const cycleTileTint = () => setTileTintIndex(i => (i + 1) % tileTintPresets.length);
 
   useEffect(() => {
     loadElectricityData();
@@ -78,6 +94,17 @@ export default function ElectricityMap() {
       setLastUpdated(new Date(realTimeData.timestamp).toLocaleString());
     }
   }, [realTimeData]);
+
+  // Watch for theme changes so we can adapt map tiles and marker strokes.
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const root = document.documentElement;
+    const obs = new MutationObserver(() => {
+      setIsDarkTheme(root.classList.contains('dark'));
+    });
+    obs.observe(root, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
 
   const getFallbackArizonaData = () => {
     return {
@@ -369,12 +396,16 @@ export default function ElectricityMap() {
         setMapData(response);
         setIsUsingFallback(false);
       }
-    } catch (error) {
+      // If real-time is expected but not available, set a flag for UI
+      if ((!response.counties || response.counties.length === 0) && isRealTimeConnected) {
+        setIsUsingFallback(true);
+      }
+        } catch (error) {
       console.error('Error loading electricity data:', error);
       setMapData(getFallbackArizonaData());
       setIsUsingFallback(true);
-    }
-    setLoading(false);
+        }
+        setLoading(false);
   };
 
   const getColorByValue = (value: number, metric: MapStyleType = 'consumption'): string => {
@@ -420,12 +451,12 @@ export default function ElectricityMap() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--background-gradient)' }}>
         <div className="text-center space-y-4">
-          <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+          <div className="animate-spin w-12 h-12 border-4" style={{ borderColor: 'hsl(var(--primary))', borderTopColor: 'transparent', borderRadius: '9999px' }}></div>
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-slate-800">Loading Arizona Electricity Data</h3>
-            <p className="text-slate-600">Fetching real-time consumption and sustainability metrics...</p>
+            <h3 className="text-xl font-semibold text-foreground">Loading Arizona Electricity Data</h3>
+            <p className="text-foreground/80">Fetching real-time consumption and sustainability metrics...</p>
           </div>
         </div>
       </div>
@@ -433,17 +464,17 @@ export default function ElectricityMap() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+    <div className="min-h-screen" style={{ background: 'var(--background-gradient)' }}>
+      <header className="bg-popover backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 flex items-center justify-center">
+                 <ThemeToggle />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Arizona Energy Map</h1>
-                <p className="text-sm text-slate-600">Interactive electricity usage & sustainability insights</p>
+                <h1 className="text-2xl font-bold text-foreground">Arizona Energy Map</h1>
+                <p className="text-sm text-foreground/80">Interactive electricity usage & sustainability insights</p>
               </div>
             </div>
             
@@ -461,12 +492,12 @@ export default function ElectricityMap() {
                 ) : isUsingFallback ? (
                   <>
                     <WifiOff className="w-4 h-4 text-amber-500" />
-                    <span className="text-sm text-amber-600">Fallback</span>
+                    <span className="text-sm text-amber-600">Cannot load live data</span>
                   </>
-                ) : (
+                  ) : (
                   <>
-                    <WifiOff className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm text-gray-500">Static</span>
+                    <WifiOff className="w-4 h-4 text-foreground/50 text-pink-300" />
+                    <span className="text-sm text-foreground/70 text-pink-300">Cannot load live data</span>
                   </>
                 )}
               </div>
@@ -490,17 +521,18 @@ export default function ElectricityMap() {
 
         <div className="grid lg:grid-cols-4 gap-6 mt-6">
           <div className="lg:col-span-3">
-            <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur">
+            <Card className="overflow-hidden shadow-xl border-0 bg-card backdrop-blur">
               <CardContent className="p-0">
                 <div className="h-[600px] relative">
-                  <MapContainer
+                  <div style={{ height: '100%', width: '100%', filter: tileFilter }}> 
+                    <MapContainer
                     center={[34.0489, -111.0937]}
                     zoom={7}
                     style={{ height: '100%', width: '100%' }}
                     zoomControl={false}
                   >
                     <TileLayer
-                      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                      url={isDarkTheme ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"}
                       attribution="&copy; OpenStreetMap &copy; CARTO"
                     />
                     
@@ -515,16 +547,33 @@ export default function ElectricityMap() {
                                     
                       const radius = Math.max(8, Math.sqrt(county.consumption_mwh / 20000));
 
+                      // Derive stroke color from CSS var --card-foreground (tokens) so it matches theme
+                      const computedStroke = typeof document !== 'undefined'
+                        ? getComputedStyle(document.documentElement).getPropertyValue('--card-foreground').trim()
+                        : null;
+                      // CSS variables are stored as "h s% l%" (e.g. "210 40% 98%"), we can build an hsl()
+                      let strokeColor = isDarkTheme ? '#111827' : '#ffffff';
+                      if (computedStroke) {
+                        // try to parse three numbers
+                        const parts = computedStroke.replace(/%/g, '').split(/\s+/).map(p => p.replace(',', ''));
+                        if (parts.length >= 3) {
+                          const h = parts[0];
+                          const s = parts[1].includes('%') ? parts[1] : parts[1] + '%';
+                          const l = parts[2].includes('%') ? parts[2] : parts[2] + '%';
+                          strokeColor = `hsl(${h} ${s} ${l})`;
+                        }
+                      }
+
                       return (
                         <CircleMarker
                           key={index}
                           center={[county.coordinates.lat, county.coordinates.lng]}
                           pathOptions={{ 
                             fillColor: getColorByValue(value, mapStyle),
-                            color: 'white',
+                            color: strokeColor,
                             weight: 2,
                             opacity: 1,
-                            fillOpacity: 0.8
+                            fillOpacity: 0.9
                           }}
                           radius={radius}
                           eventHandlers={{
@@ -535,8 +584,8 @@ export default function ElectricityMap() {
                         >
                           <Tooltip>
                             <div className="p-1">
-                              <h4 className="font-bold text-slate-800">{county.name} County</h4>
-                              <p className="text-sm text-slate-600">Click to see details</p>
+                              <h4 className="font-bold text-foreground">{county.name} County</h4>
+                              <p className="text-sm text-foreground/80">Click to see details</p>
                             </div>
                           </Tooltip>
                         </CircleMarker>
@@ -545,6 +594,7 @@ export default function ElectricityMap() {
                     
                     <ZoomControl position="topright" />
                   </MapContainer>
+                  </div>
                   
                   <MapLegend mapStyle={mapStyle} />
                 </div>
@@ -559,18 +609,18 @@ export default function ElectricityMap() {
                 onClose={() => setShowPanel(false)}
               />
             ) : (
-              <Card className="shadow-xl border-0 bg-white/95 backdrop-blur">
+              <Card className="shadow-xl border-0 bg-card backdrop-blur">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    <MapPin className="w-5 h-5 text-blue-600" />
-                    <span>Select a County</span>
+                      <span className="text-foreground">Select a County</span>
+                      <MapPin className="w-5 h-5 text-primary" />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-600 mb-4">
-                    Click on any county circle to view detailed electricity usage, 
-                    renewable energy data, and sustainability insights.
-                  </p>
+                    <p className="text-foreground/80 mb-4">
+                      Click on any county circle to view detailed electricity usage,
+                      renewable energy data, and sustainability insights.
+                    </p>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2 text-sm">
                       <div className="w-3 h-3 bg-red-400 rounded-full"></div>

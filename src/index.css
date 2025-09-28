@@ -4,11 +4,16 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    /* light theme background: soft light green */
+    --background: 140 60% 78%;
+    --pink-bg: 327 88 81;
+    /* Global background gradient uses the --background and --card tokens */
+    --background-gradient: linear-gradient(135deg, hsl(var(--pink-bg)) 20%, hsl(var(--green-bg)) 100%);
     --foreground: 210 40% 8%;
-    --card: 0 0% 100%;
+    --card: 130 80% 80%;
+    --green-bg: 142 76% 60%; /* light pink cards in light mode */
     --card-foreground: 210 40% 8%;
-    --popover: 0 0% 100%;
+    --popover: 128 80% 70%;
     --popover-foreground: 210 40% 8%;
     --primary: 210 40% 15%;
     --primary-foreground: 0 0% 98%;
@@ -28,10 +33,73 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  /* Dark mode variables (Tailwind is configured for class-based dark mode) */
+  :root.dark {
+  --card: 0 0% 4%; /* dark gray cards in dark mode */
+    --foreground: 220 40% 98%;
+  /* use a dark gray background for dark mode */
+  --background: 340 100% 11%; /* dark gray */
+  /* gradient from slightly darker card to background */
+  --background-gradient: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+    --card-foreground: 210 40% 98%;
+  --popover: 340 100% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 60%;
+    --primary-foreground: 210 40% 10%;
+    --secondary: 215 10% 18%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 220 8% 16%;
+    --muted-foreground: 210 40% 78%;
+    --accent: 210 40% 14%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 216 12% 18%;
+    --input: 216 12% 14%;
+    --ring: 200 100% 60%;
+    --radius: 0.5rem;
   }
-  body {
-    @apply bg-background text-foreground;
+
+}
+
+/* Component layer: make main panels slightly translucent/see-through */
+@layer components {
+  :root {
+    /* default panel alpha (0 - 1). Tweak this to increase/decrease translucency */
+    --panel-alpha: 0.75;
+    /* default panel border color: dark green */
+    --panel-border: 142 45% 60%;
+  }
+
+  :root.dark {
+    /* slightly different alpha in dark mode for better contrast */
+    --panel-alpha: 0.7;
+    /* slightly brighter green for dark mode so border reads on dark backgrounds */
+    --panel-border: 340 100% 8%;
+  }
+
+  /* Override Tailwind-generated utility colors for card/popover to include alpha.
+     We use !important so these overrides take precedence over the generated bg-* rules.
+     This makes all elements using bg-card or bg-popover slightly transparent. */
+  .bg-card {
+    background-color: hsl(var(--card) / var(--panel-alpha)) !important;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 2px solid hsl(var(--panel-border)) !important;
+  }
+
+  .bg-popover {
+    background-color: hsl(var(--popover) / var(--panel-alpha)) !important;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 2px solid hsl(var(--panel-border)) !important;
+  }
+
+  /* Also cover any components that may set explicit class names */
+  .card,
+  .popover,
+  .panel {
+    background-color: hsl(var(--card) / var(--panel-alpha)) !important;
+    border: 2px solid hsl(var(--panel-border)) !important;
   }
 }

@@ -60,21 +60,21 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <Card key={index} className="overflow-hidden border-0 shadow-lg bg-white/95 backdrop-blur">
+          <Card key={index} className="overflow-hidden border-0 shadow-lg bg-card backdrop-blur">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                  <p className="text-xs font-medium text-foreground/70 uppercase tracking-wide">
                     {stat.title}
                   </p>
-                  <p className="text-2xl font-bold text-slate-900">
+                  <p className="text-2xl font-bold text-foreground">
                     {stat.value}
                   </p>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-foreground/80">
                     {stat.description}
                   </p>
                 </div>
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${stat.gradient} flex items-center justify-center`}>
+                <div className={`w-12 h-12 rounded-xl ${stat.gradient} flex items-center justify-center`}>
                   <stat.icon className="w-6 h-6 text-white" />
                 </div>
               </div>
@@ -85,19 +85,19 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
 
       {/* Additional Insights */}
       <div className="grid md:grid-cols-2 gap-6">
-        <Card className="border-0 shadow-lg bg-white/95 backdrop-blur">
+        <Card className="border-0 shadow-lg bg-card backdrop-blur">
           <CardContent className="p-6">
-            <h3 className="font-semibold text-slate-900 mb-4">Sustainability Leader</h3>
+            <h3 className="font-semibold text-foreground mb-4">Sustainability Leader</h3>
             <div className="space-y-2">
               <p className="text-2xl font-bold text-emerald-600">
                 {topRenewableCounty.name || 'N/A'} County
               </p>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-foreground/80">
                 Leading with {(topRenewableCounty.renewable_percentage || 0).toFixed(1)}% renewable energy
               </p>
               <div className="flex items-center space-x-2 mt-3">
                 <Leaf className="w-4 h-4 text-emerald-600" />
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-foreground/70">
                   {formatNumber(topRenewableCounty.renewable_capacity_mw || 0)} MW capacity
                 </span>
               </div>
@@ -105,22 +105,22 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-white/95 backdrop-blur">
+        <Card className="border-0 shadow-lg bg-card backdrop-blur">
           <CardContent className="p-6">
-            <h3 className="font-semibold text-slate-900 mb-4">State Average</h3>
+            <h3 className="font-semibold text-foreground mb-4">State Average</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Sustainability Score</span>
+                <span className="text-sm text-foreground/80">Sustainability Score</span>
                 <span className="font-semibold">{avgSustainabilityScore.toFixed(1)}/100</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Per Capita Usage</span>
+                <span className="text-sm text-foreground/80">Per Capita Usage</span>
                 <span className="font-semibold">
                   {((data?.total_consumption || 0) / (data?.total_population || 1) * 1000).toFixed(1)} kWh
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600">Counties</span>
+                <span className="text-sm text-foreground/80">Counties</span>
                 <span className="font-semibold">{counties?.length || 0}</span>
               </div>
             </div>
