@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, ZoomControl, CircleMarker, Tooltip } from 'rea
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import { loadRealElectricityData } from '@/integrations/Core';
 import { useRealTimeData } from './services/RealTimeDataService';
 import { CarbonFootprintService } from './services/CarbonFootprintService';
@@ -406,7 +407,7 @@ export default function ElectricityMap() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4 fade-in">
           <div className="relative mx-auto w-12 h-12 flex items-center justify-center">
             <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full"></div>
@@ -427,7 +428,7 @@ export default function ElectricityMap() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen">
       <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 fixed top-0 left-0 w-full z-50 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -442,6 +443,9 @@ export default function ElectricityMap() {
             </div>
             
             <div className="flex items-center space-x-4 slide-in-right">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
               {/* Real-time Status Indicator */}
               <div className="flex items-center space-x-2 transition-smooth">
                 {isRealTimeConnected && !isUsingFallback ? (
@@ -519,7 +523,7 @@ export default function ElectricityMap() {
           <div className="fade-in-scale stagger-2">
             <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur hover-lift">
               <CardContent className="p-0">
-                <div className="h-[600px] relative">
+                <div className="h-[600px] relative map-tint">
                   <MapContainer
                     center={[34.0489, -111.0937]}
                     zoom={7}
