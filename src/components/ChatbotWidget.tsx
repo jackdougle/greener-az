@@ -106,7 +106,7 @@ export default function ChatbotWidget() {
       <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setOpen((s) => !s)}
-          className="w-32 h-32 md:w-36 md:h-36 rounded-full shadow-2xl bg-white flex items-center justify-center transform hover:scale-105 transition"
+          className="w-32 h-32 md:w-36 md:h-36 rounded-full shadow-2xl bg-gradient-to-br from-pink-100 to-green-100 flex items-center justify-center transform hover:scale-105 transition border-2 border-pink-200"
           aria-label="Open chatbot"
         >
           <img src="/assets/char.gif" alt="assistant" className="w-28 h-28 md:w-32 md:h-32" />
@@ -121,28 +121,28 @@ export default function ChatbotWidget() {
           style={pos ? { left: pos.left, top: pos.top } : { right: 24, bottom: 96 }}
         >
           <div
-            className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col"
+            className="bg-gradient-to-br from-pink-50 to-green-50 rounded-lg shadow-lg overflow-hidden flex flex-col border-2 border-pink-200"
             style={{ minHeight: 320, maxHeight: '60vh' }}
           >
             <div
-              className="flex items-center gap-4 p-3 border-b cursor-move"
+              className="flex items-center gap-4 p-3 border-b border-pink-200 cursor-move bg-gradient-to-r from-pink-100 to-green-100"
               onMouseDown={startDrag}
               onTouchStart={startDrag}
               title="Drag to move"
             >
               <img src="/assets/char.gif" alt="assistant" className="w-16 h-16 rounded-full" />
               <div className="font-semibold text-lg">Cactina (AI)</div>
-              <div className="ml-auto text-sm text-slate-500">online</div>
+              <div className="ml-auto text-sm text-pink-600">online</div>
             </div>
 
             <div className="p-3 flex-1 overflow-auto chat-scrollbar" data-testid="chat-history">
-              {messages.length === 0 && <div className="text-sm text-slate-500">Say hi 👋</div>}
+              {messages.length === 0 && <div className="text-sm text-pink-600">Say hi 👋</div>}
               {messages.map((m) => (
                 <div key={m.id} className={`my-2 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   {m.role === 'bot' && <img src="/assets/char-speaking.gif" alt="assistant" className="w-14 h-14 rounded-full mr-3" />}
                   <div
                     className={`px-3 py-2 rounded-lg max-w-[70%] text-sm ${
-                      m.role === 'user' ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-800'
+                      m.role === 'user' ? 'bg-pink-500 text-white' : 'bg-green-100 text-green-800'
                     }`}
                   >
                     {m.text}
@@ -152,7 +152,7 @@ export default function ChatbotWidget() {
               {isThinking && (
                 <div className="my-2 flex justify-start">
                   <img src="/assets/char-speaking.gif" alt="assistant" className="w-14 h-14 rounded-full mr-3" />
-                  <div className="px-3 py-2 rounded-lg max-w-[70%] text-sm bg-slate-100 text-slate-800">
+                  <div className="px-3 py-2 rounded-lg max-w-[70%] text-sm bg-green-100 text-green-800">
                     <div className="typing-bubble">
                       <div className="typing-dots">
                         <span />
@@ -166,16 +166,16 @@ export default function ChatbotWidget() {
               <div ref={bottomRef} />
             </div>
 
-            <div className="p-2 border-t">
+            <div className="p-2 border-t border-pink-200 bg-gradient-to-r from-pink-50 to-green-50">
               <div className="flex gap-2">
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Ask about the map or energy..."
-                  className="flex-1 px-3 py-2 rounded border"
+                  className="flex-1 px-3 py-2 rounded border border-pink-200 bg-white focus:border-pink-400 focus:outline-none"
                 />
-                <button onClick={handleSend} className="px-3 py-2 rounded bg-sky-600 text-white">
+                <button onClick={handleSend} className="px-3 py-2 rounded bg-pink-500 text-white hover:bg-pink-600 transition-colors">
                   Send
                 </button>
               </div>
