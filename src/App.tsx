@@ -5,7 +5,7 @@ import ChatbotWidget from './components/ChatbotWidget'
 
 function App() {
   return (
-    <div className="App">
+    <div className="App min-h-screen" style={{ background: 'var(--background-gradient)' }}>
       <ElectricityMap />
       <ChatbotWidget />
     </div>

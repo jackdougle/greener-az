@@ -39,24 +39,24 @@ export default function MapLegend({ mapStyle }: MapLegendProps) {
   const currentLegend = legends[mapStyle];
 
   return (
-    <Card className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur border-0 shadow-lg">
+    <Card className="absolute bottom-4 left-4 z-[1000] bg-card/95 backdrop-blur shadow-lg border border-border">
       <CardContent className="p-4">
-        <h4 className="font-semibold text-sm mb-3 text-slate-800">
+        <h4 className="font-semibold text-sm mb-3 text-foreground">
           {currentLegend.title}
         </h4>
         <div className="space-y-2">
           {currentLegend.colors.map((item, index) => (
             <div key={index} className="flex items-center space-x-2">
-              <div 
-                className="w-4 h-4 rounded-full border border-slate-300"
-                style={{ backgroundColor: item.color }}
+              <div
+                className="w-4 h-4 rounded-full border"
+                style={{ backgroundColor: item.color, borderColor: 'hsl(var(--border))' }}
               />
-              <span className="text-xs text-slate-600">{item.label}</span>
+              <span className="text-xs text-foreground/80">{item.label}</span>
             </div>
           ))}
         </div>
-        <div className="mt-3 pt-3 border-t border-slate-200">
-          <p className="text-xs text-slate-500">
+        <div className="mt-3 pt-3 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+          <p className="text-xs text-foreground/80">
             Circle size = Total consumption
           </p>
         </div>

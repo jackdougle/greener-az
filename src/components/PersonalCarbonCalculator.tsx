@@ -42,13 +42,13 @@ export default function PersonalCarbonCalculator() {
   };
 
   return (
-    <Card className="border-0 shadow-lg bg-white/95 backdrop-blur max-w-2xl">
+    <Card className="border-0 shadow-lg bg-card backdrop-blur max-w-2xl">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Calculator className="w-5 h-5 text-green-600" />
           <span>Personal Carbon Footprint Calculator</span>
         </CardTitle>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-foreground/80">
           Calculate your household's carbon footprint from electricity usage
         </p>
       </CardHeader>
@@ -57,7 +57,7 @@ export default function PersonalCarbonCalculator() {
         {/* Input Form */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700 flex items-center space-x-2">
+            <label className="text-sm font-medium text-foreground flex items-center space-x-2">
               <Zap className="w-4 h-4" />
               <span>Monthly Electricity Usage (kWh)</span>
             </label>
@@ -69,13 +69,13 @@ export default function PersonalCarbonCalculator() {
               placeholder="1000"
               min="0"
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-foreground/60">
               Average US household: ~900 kWh/month
             </p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700 flex items-center space-x-2">
+            <label className="text-sm font-medium text-foreground flex items-center space-x-2">
               <Leaf className="w-4 h-4" />
               <span>Renewable Energy Percentage (%)</span>
             </label>
@@ -88,7 +88,7 @@ export default function PersonalCarbonCalculator() {
               min="0"
               max="100"
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-foreground/60">
               Arizona grid average: ~20%, Your utility may vary
             </p>
           </div>
@@ -112,15 +112,15 @@ export default function PersonalCarbonCalculator() {
 
             {/* Annual Totals */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-50 rounded-lg p-4">
+              <div className="rounded-lg p-4" style={{ backgroundColor: 'hsl(var(--reduce-impact-bg))', border: '1px solid hsl(var(--reduce-impact-border))' }}>
                 <div className="flex items-center space-x-2 mb-2">
-                  <Home className="w-5 h-5 text-blue-600" />
-                  <span className="font-semibold text-blue-900">Household Total</span>
+                  <Home className="w-5 h-5 text-primary" />
+                  <span className="font-semibold text-foreground">Household Total</span>
                 </div>
-                <div className="text-2xl font-bold text-blue-900">
+                <div className="text-2xl font-bold text-foreground">
                   {result.householdCarbonTonsPerYear.toFixed(1)} tons CO₂/year
                 </div>
-                <div className="text-sm text-blue-700">
+                <div className="text-sm text-foreground/80">
                   {(result.householdCarbonKgPerMonth).toFixed(0)} kg CO₂/month
                 </div>
               </div>
@@ -166,14 +166,14 @@ export default function PersonalCarbonCalculator() {
 
             {/* Renewable Impact */}
             <div className="bg-green-50 rounded-lg p-4">
-              <h4 className="font-semibold text-green-900 mb-2">Renewable Energy Impact</h4>
+              <h4 className="font-semibold text-foreground mb-2">Renewable Energy Impact</h4>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-green-700">Emissions reduction from renewables</span>
-                <Badge className="bg-green-100 text-green-800">
+                <span className="text-green-600 dark:text-green-400">Emissions reduction from renewables</span>
+                <Badge className="bg-green-600 text-green-50">
                   -{result.renewableImpactReduction.toFixed(1)}%
                 </Badge>
               </div>
-              <p className="text-sm text-green-800">
+              <p className="text-sm text-foreground/80">
                 Switching to 100% renewable energy could reduce your footprint by{' '}
                 {(100 - result.renewableImpactReduction).toFixed(1)}% more!
               </p>
@@ -181,8 +181,8 @@ export default function PersonalCarbonCalculator() {
 
             {/* Action Items */}
             <div className="bg-blue-50 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-900 mb-2">Reduce Your Impact</h4>
-              <ul className="text-sm text-blue-800 space-y-1">
+              <h4 className="font-semibold text-foreground mb-2">Reduce Your Impact</h4>
+              <ul className="text-sm text-foreground/80 space-y-1">
                 <li>• Install rooftop solar panels (reduce by 50-80%)</li>
                 <li>• Switch to energy-efficient appliances</li>
                 <li>• Use LED lighting and smart thermostats</li>

@@ -7,12 +7,9 @@
 
 export interface EIAElectricityData {
   period: string;
-  subba: string; // Sub-balancing authority
-  'subba-name': string;
-  parent: string; // Parent balancing authority
-  'parent-name': string;
-  'respondent-id': string;
+  respondent: string; // Balancing authority code
   'respondent-name': string;
+  type: string; // Type code (D, NG, etc.)
   'type-name': string;
   value: number;
   'value-units': string;
@@ -36,11 +33,6 @@ export interface ProcessedElectricityData {
     interchange: number;
   };
   srp: {
-    demand: number;
-    generation: number;
-    interchange: number;
-  };
-  walc: {
     demand: number;
     generation: number;
     interchange: number;
@@ -95,8 +87,8 @@ class EIAApiService {
       const today = new Date().toISOString().split('T')[0];
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-      // Arizona balancing authorities: AZPS, SRP, WALC
-      const arizonaBalancingAuthorities = ['AZPS', 'SRP', 'WALC'];
+      // Arizona balancing authorities: AZPS, SRP (WALC not available in EIA API)
+      const arizonaBalancingAuthorities = ['AZPS', 'SRP'];
 
       const responses = await Promise.all(
         arizonaBalancingAuthorities.map(ba => this.fetchBalancingAuthorityData(ba, yesterday, today))
@@ -126,13 +118,13 @@ class EIAApiService {
     startDate: string,
     endDate: string
   ): Promise<EIAApiResponse> {
-    const url = new URL(`${this.baseUrl}/electricity/rto/region-sub-ba-data/data`);
+    const url = new URL(`${this.baseUrl}/electricity/rto/region-data/data`);
 
     // Add query parameters
     url.searchParams.set('api_key', this.apiKey);
     url.searchParams.set('frequency', 'hourly');
     url.searchParams.set('data[0]', 'value');
-    url.searchParams.set('facets[parent][]', balancingAuthority);
+    url.searchParams.set('facets[respondent][]', balancingAuthority);
     url.searchParams.set('start', `${startDate}T00`);
     url.searchParams.set('end', `${endDate}T23`);
     url.searchParams.set('sort[0][column]', 'period');
@@ -145,8 +137,7 @@ class EIAApiService {
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Arizona-Energy-Map/1.0'
+        'Accept': 'application/json'
       }
     });
 
@@ -176,7 +167,6 @@ class EIAApiService {
       timestamp: now,
       azps: { demand: 0, generation: 0, interchange: 0 },
       srp: { demand: 0, generation: 0, interchange: 0 },
-      walc: { demand: 0, generation: 0, interchange: 0 },
       stateTotal: { totalDemand: 0, totalGeneration: 0, totalInterchange: 0 }
     };
 
@@ -185,16 +175,20 @@ class EIAApiService {
 
       // Group data by balancing authority and type
       data.forEach(point => {
-        const ba = point.parent.toLowerCase() as 'azps' | 'srp' | 'walc';
+        const ba = point.respondent.toLowerCase() as 'azps' | 'srp';
+        const typeCode = point.type;
         const typeName = point['type-name'].toLowerCase();
 
         if (processedData[ba]) {
-          // Get the most recent value (data is sorted by period desc)
-          if (typeName.includes('demand') || typeName.includes('load')) {
+          // Process based on type code for more accurate parsing
+          if (typeCode === 'D' || typeName.includes('demand')) {
+            // Use the most recent demand value
             processedData[ba].demand = Math.max(processedData[ba].demand, point.value || 0);
-          } else if (typeName.includes('generation') || typeName.includes('net generation')) {
+          } else if (typeCode === 'NG' || typeName.includes('net generation')) {
+            // Use the most recent generation value
             processedData[ba].generation = Math.max(processedData[ba].generation, point.value || 0);
-          } else if (typeName.includes('interchange') || typeName.includes('net interchange')) {
+          } else if (typeCode === 'TI' || typeName.includes('interchange')) {
+            // Sum interchange values
             processedData[ba].interchange += point.value || 0;
           }
         }
@@ -203,9 +197,9 @@ class EIAApiService {
 
     // Calculate state totals
     processedData.stateTotal = {
-      totalDemand: processedData.azps.demand + processedData.srp.demand + processedData.walc.demand,
-      totalGeneration: processedData.azps.generation + processedData.srp.generation + processedData.walc.generation,
-      totalInterchange: processedData.azps.interchange + processedData.srp.interchange + processedData.walc.interchange
+      totalDemand: processedData.azps.demand + processedData.srp.demand,
+      totalGeneration: processedData.azps.generation + processedData.srp.generation,
+      totalInterchange: processedData.azps.interchange + processedData.srp.interchange
     };
 
     return processedData;
@@ -248,13 +242,22 @@ class EIAApiService {
 
     Object.entries(countyMappings).forEach(([county, mapping]) => {
       const baData = eiaData[mapping.ba as keyof typeof eiaData];
-      if (typeof baData === 'object' && 'demand' in baData) {
+      if (typeof baData === 'object' && baData && 'demand' in baData) {
         countyData[county] = {
           currentConsumption: Math.round((baData.demand * mapping.share) * 1000), // Convert MW to kWh
           currentGeneration: Math.round((baData.generation * mapping.share) * 1000),
           gridStress: this.calculateGridStress(baData.demand, baData.generation),
           lastUpdated: eiaData.timestamp,
           isRealTime: true
+        };
+      } else {
+        // Provide a fallback structure if baData is not available
+        countyData[county] = {
+          currentConsumption: 0,
+          currentGeneration: 0,
+          gridStress: 'Low',
+          lastUpdated: eiaData.timestamp,
+          isRealTime: false
         };
       }
     });
@@ -272,6 +275,65 @@ class EIAApiService {
     if (utilizationRatio > 0.75) return 'Moderate';
     if (utilizationRatio > 0.5) return 'Normal';
     return 'Low';
+  }
+
+  /**
+   * Fetches the latest average residential electricity rate for Arizona
+   */
+  async fetchArizonaResidentialRateData(): Promise<number> {
+    if (!this.isConfigured()) {
+      throw new Error('EIA API key not configured.');
+    }
+
+    const cacheKey = 'arizona-residential-rate';
+    const cached = this.requestCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
+      return cached.data;
+    }
+
+    try {
+      const url = new URL(`${this.baseUrl}/electricity/retail-sales/data`);
+      url.searchParams.set('api_key', this.apiKey);
+      url.searchParams.set('frequency', 'monthly');
+      url.searchParams.set('data[0]', 'price');
+      url.searchParams.set('facets[sectorid][]', 'RES'); // Residential sector
+      url.searchParams.set('facets[stateid][]', 'AZ'); // Arizona
+      url.searchParams.set('sort[0][column]', 'period');
+      url.searchParams.set('sort[0][direction]', 'desc');
+      url.searchParams.set('length', '1');
+
+      console.log('🔄 Fetching EIA residential rate data for Arizona...');
+
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`EIA API request failed (${response.status}): ${errorText}`);
+      }
+
+      const data = await response.json();
+      // The retail-sales endpoint has a different structure
+      const rateData = data?.response?.data?.[0];
+      const rate = parseFloat(rateData?.price);
+
+      if (isNaN(rate)) {
+        console.error('❌ Invalid or missing residential rate data in API response. First data object:', rateData);
+        throw new Error('Failed to parse residential rate from EIA API.');
+      }
+
+      console.log(`✅ Received residential rate: ${rate} cents/kWh`);
+      this.requestCache.set(cacheKey, { data: rate, timestamp: Date.now() });
+      return rate;
+
+    } catch (error) {
+      console.error('Error fetching EIA residential rate data:', error);
+      // Fallback to a reasonable static value if API fails
+      return 13.5;
+    }
   }
 
   /**

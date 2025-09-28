@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, ZoomControl, CircleMarker, Tooltip } from 'react-leaflet';
-// Avoid importing Leaflet types directly in this environment; use local alias
-type LatLngExpression = any
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import { loadRealElectricityData } from '@/integrations/Core';
 import { useRealTimeData } from './services/RealTimeDataService';
 import { CarbonFootprintService } from './services/CarbonFootprintService';
@@ -408,15 +407,15 @@ export default function ElectricityMap() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4 fade-in">
-          <div className="relative mx-auto">
+          <div className="relative mx-auto w-12 h-12 flex items-center justify-center">
             <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full"></div>
             <div className="absolute inset-0 w-12 h-12 border-4 border-emerald-300 border-t-transparent rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-slate-800 fade-in-up stagger-1">Loading Arizona Electricity Data</h3>
-            <p className="text-slate-600 fade-in-up stagger-2">Fetching real-time consumption and sustainability metrics...</p>
+            <h3 className="text-xl font-semibold text-foreground fade-in-up stagger-1">Loading Arizona Electricity Data</h3>
+            <p className="text-foreground/80 fade-in-up stagger-2">Fetching real-time consumption and sustainability metrics...</p>
             <div className="flex justify-center space-x-1 mt-4">
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -429,21 +428,24 @@ export default function ElectricityMap() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 fixed top-0 left-0 w-full z-50 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
+    <div className="min-h-screen">
+      <header className="bg-card/80 backdrop-blur-md border-b border-border fixed top-0 left-0 w-full z-50 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 slide-in-left">
-              <div className="rounded-xl flex items-center justify-center hover-scale transition-bounce">
-                <img src="/assets/char.gif" alt="site mascot" className="w-12 h-12 md:w-14 md:h-14 rounded-lg" />
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-xl flex items-center justify-center hover-scale transition-bounce">
+                <Zap className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Arizona Energy Map</h1>
-                <p className="text-sm text-slate-600">Interactive electricity usage & sustainability insights</p>
+                <h1 className="text-2xl font-bold text-foreground">Arizona Energy Map</h1>
+                <p className="text-sm text-foreground/80">Interactive electricity usage & sustainability insights</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-4 slide-in-right">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
               {/* Real-time Status Indicator */}
               <div className="flex items-center space-x-2 transition-smooth">
                 {isRealTimeConnected && !isUsingFallback ? (
@@ -451,7 +453,7 @@ export default function ElectricityMap() {
                     <Wifi className="w-4 h-4 text-green-600 transition-smooth" />
                     <div className="flex items-center space-x-1">
                       <div className="w-2 h-2 bg-green-500 rounded-full pulse-soft"></div>
-                      <span className="text-sm text-green-700 font-medium">Live</span>
+                      <span className="text-sm text-green-600 dark:text-green-400 font-medium">Live</span>
                     </div>
                   </>
                 ) : isUsingFallback ? (
@@ -461,13 +463,18 @@ export default function ElectricityMap() {
                   </>
                 ) : (
                   <>
-                    <WifiOff className="w-4 h-4 text-gray-400 transition-smooth" />
-                    <span className="text-sm text-gray-500">Static</span>
+                    <WifiOff className="w-4 h-4 text-foreground/60 transition-smooth" />
+                    <span className="text-sm text-foreground/60">Static</span>
                   </>
                 )}
               </div>
 
-              {/* map controls moved into the map container for corner placement */}
+              <div className="fade-in stagger-2">
+                <MapControls
+                  mapStyle={mapStyle}
+                  setMapStyle={setMapStyle}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -514,13 +521,20 @@ export default function ElectricityMap() {
 
           {/* Map - Full Width */}
           <div className="fade-in-scale stagger-2">
-            <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur hover-lift">
+            <Card className="overflow-hidden shadow-xl border-0 bg-card backdrop-blur hover-lift">
               <CardContent className="p-0">
-                <div className="h-[600px] relative">
-                  <MapContainer {...({ center: [34.0489, -111.0937] as LatLngExpression, zoom: 7, style: { height: '100%', width: '100%' }, zoomControl: false } as any)}>
-                    {/* cast to any to avoid strict react-leaflet typing issues for TileLayer props */}
-                    <TileLayer {...({ url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", attribution: "&copy; OpenStreetMap &copy; CARTO" } as any)} />
-
+                <div className="h-[600px] relative map-tint">
+                  <MapContainer
+                    center={[34.0489, -111.0937]}
+                    zoom={7}
+                    style={{ height: '100%', width: '100%' }}
+                    zoomControl={false}
+                  >
+                    <TileLayer
+                      url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                      attribution="&copy; OpenStreetMap &copy; CARTO"
+                    />
+                    
                     {mapData?.counties.map((county, index) => {
                       if (!county.coordinates || typeof county.coordinates.lat !== 'number' || typeof county.coordinates.lng !== 'number') {
                         return null;
@@ -533,43 +547,48 @@ export default function ElectricityMap() {
                       const radius = Math.max(8, Math.sqrt(county.consumption_mwh / 20000));
 
                       return (
-                        // cast props to any to satisfy strict TS setups for react-leaflet
-                        <CircleMarker {...({ key: index, center: [county.coordinates.lat, county.coordinates.lng], pathOptions: {
-                          fillColor: getColorByValue(value, mapStyle),
-                          color: 'white',
-                          weight: 2,
-                          opacity: 1,
-                          fillOpacity: 0.8
-                        }, radius, eventHandlers: {
-                          click: () => {
-                            handleCountyClick(county);
-                          },
-                          mouseover: (e: any) => {
-                            const marker = e.target;
-                            marker.setStyle({
-                              weight: 3,
-                              fillOpacity: 1,
-                              color: '#3b82f6'
-                            });
-                          },
-                          mouseout: (e: any) => {
-                            const marker = e.target;
-                            marker.setStyle({
-                              weight: 2,
-                              fillOpacity: 0.8,
-                              color: 'white'
-                            });
-                          }
-                        } } as any)}>
+                        <CircleMarker
+                          key={index}
+                          center={[county.coordinates.lat, county.coordinates.lng]}
+                          pathOptions={{
+                            fillColor: getColorByValue(value, mapStyle),
+                            color: 'white',
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                          }}
+                          radius={radius}
+                          eventHandlers={{
+                            click: () => {
+                              handleCountyClick(county);
+                            },
+                            mouseover: (e) => {
+                              const marker = e.target;
+                              marker.setStyle({
+                                weight: 3,
+                                fillOpacity: 1,
+                                color: '#3b82f6'
+                              });
+                            },
+                            mouseout: (e) => {
+                              const marker = e.target;
+                              marker.setStyle({
+                                weight: 2,
+                                fillOpacity: 0.8,
+                                color: 'white'
+                              });
+                            }
+                          }}
+                        >
                           <Tooltip>
-                            <div className="p-2 bg-white/95 backdrop-blur rounded-lg shadow-lg border-0">
-                              <h4 className="font-bold text-slate-800 mb-1">{county.name} County</h4>
+                            <div className="p-2 bg-card/95 backdrop-blur rounded-lg shadow-lg border-0">
+                              <h4 className="font-bold text-foreground mb-1">{county.name} County</h4>
                               <div className="text-xs text-slate-600 space-y-0.5">
                                 <p>Population: {formatNumber(county.population)}</p>
                                 <p>Consumption: {formatNumber(county.consumption_mwh)} MWh</p>
                                 <p>Renewable: {county.renewable_percentage}%</p>
                               </div>
-                              <p className="text-xs text-blue-600 mt-2 font-medium">Click for details →</p>
+                              <p className="text-xs text-primary mt-2 font-medium">Click for details →</p>
                             </div>
                           </Tooltip>
                         </CircleMarker>
@@ -578,14 +597,10 @@ export default function ElectricityMap() {
                     
                     <ZoomControl position="topright" />
                   </MapContainer>
-
-                  {/* map corner controls moved outside the MapContainer to ensure they render above Leaflet panes */}
-                  <div className="absolute top-3 right-3 z-[99999] pointer-events-auto">
-                    <MapControls mapStyle={mapStyle} setMapStyle={setMapStyle} />
-                  </div>
+                  
+                  <MapLegend mapStyle={mapStyle} />
                 </div>
               </CardContent>
-              <MapLegend mapStyle={mapStyle} />
             </Card>
           </div>
         </div>

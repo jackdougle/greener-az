@@ -17,7 +17,7 @@ export default function DataSources({ sources, lastUpdated, isRealTime = false, 
   if (!sources || sources.length === 0) return null;
 
   return (
-    <Card className="mt-6 border-0 shadow-lg bg-white/95 backdrop-blur">
+    <Card className="mt-6 shadow-lg bg-card backdrop-blur border border-border">
       <CardHeader>
         <CardTitle className="text-lg flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -30,7 +30,7 @@ export default function DataSources({ sources, lastUpdated, isRealTime = false, 
               <span>Live Data</span>
             </div>
           ) : isUsingFallback ? (
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
+            <div className="flex items-center space-x-2 text-sm text-foreground/70">
               <Wifi className="w-4 h-4" />
               <span>Fallback Data</span>
             </div>
@@ -44,15 +44,15 @@ export default function DataSources({ sources, lastUpdated, isRealTime = false, 
             return (
               <div key={index} className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-2 flex-1">
-                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
-                  <span className="text-slate-600">{source}</span>
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                  <span className="text-foreground/80">{source}</span>
                 </div>
                 {link && (
                   <a
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition-colors"
+                    className="flex items-center space-x-1 text-primary hover:text-primary/80 transition-colors"
                   >
                     <span className="text-xs">View</span>
                     <ExternalLink className="w-3 h-3" />
@@ -62,23 +62,23 @@ export default function DataSources({ sources, lastUpdated, isRealTime = false, 
             );
           })}
         </div>
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+        <div className="mt-4 p-3 rounded-lg" style={{ backgroundColor: 'hsl(var(--arizona-tips-bg))', border: '1px solid hsl(var(--arizona-tips-border))' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4 text-blue-600" />
-              <p className="text-xs text-blue-800">
+              <Clock className="w-4 h-4 text-primary" />
+              <p className="text-xs text-foreground/80">
                 {isRealTime && !isUsingFallback ? 'Real-time updates' : isUsingFallback ? 'Using fallback data' : 'Last updated'}: {lastUpdated || new Date().toLocaleString()}
               </p>
             </div>
             {isRealTime && !isUsingFallback ? (
               <div className="flex items-center space-x-1">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-green-700">Connected</span>
+                <span className="text-xs text-green-600 dark:text-green-400">Connected</span>
               </div>
             ) : isUsingFallback ? (
               <div className="flex items-center space-x-1">
                 <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                <span className="text-xs text-gray-600">Static Data</span>
+                <span className="text-xs text-foreground/60">Static Data</span>
               </div>
             ) : null}
           </div>

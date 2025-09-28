@@ -118,8 +118,12 @@ export async function loadRealElectricityData(): Promise<MapData> {
       throw new Error('EIA API not configured');
     }
 
-    // Fetch real EIA data
-    const eiaData = await eiaApiService.fetchArizonaElectricityData();
+    // Fetch real EIA data and residential rate data in parallel
+    const [eiaData, residentialRate] = await Promise.all([
+      eiaApiService.fetchArizonaElectricityData(),
+      eiaApiService.fetchArizonaResidentialRateData()
+    ]);
+
     console.log('✅ Successfully fetched EIA data:', eiaData);
 
     // Convert EIA data to county-level data using real consumption
@@ -127,12 +131,14 @@ export async function loadRealElectricityData(): Promise<MapData> {
       const baKey = metadata.balancing_authority.toLowerCase() as 'azps' | 'srp' | 'walc';
       const baData = eiaData[baKey];
 
-      // Calculate real consumption for this county based on BA data and county share
-      const countyConsumption = baData.demand * metadata.share * 1000; // Convert MW to MWh
-      const countyGeneration = baData.generation * metadata.share * 1000;
+      // Safely calculate consumption and generation, defaulting to 0 if data is missing
+      const countyConsumption = (baData && baData.demand) ? baData.demand * metadata.share * 1000 : 0;
+      const countyGeneration = (baData && baData.generation) ? baData.generation * metadata.share * 1000 : 0;
 
-      // Estimate renewable percentage based on statewide data
-      const renewablePercentage = Math.round((countyGeneration / countyConsumption) * 100 * 0.3); // Approximate 30% renewable mix
+      // Estimate renewable percentage, avoiding division by zero
+      const renewablePercentage = countyConsumption > 0
+        ? Math.round((countyGeneration / countyConsumption) * 100 * 0.3)
+        : 0;
 
       // Calculate emissions based on consumption (approximate factor)
       const carbonEmissions = countyConsumption * 0.4; // Rough CO2 factor
@@ -143,12 +149,12 @@ export async function loadRealElectricityData(): Promise<MapData> {
         population: metadata.population,
         major_cities: metadata.major_cities,
         renewable_percentage: Math.min(renewablePercentage, 45), // Cap at 45%
-        avg_residential_rate: 11.0 + Math.random() * 3, // Estimate range 11-14 cents/kWh
+        avg_residential_rate: residentialRate, // Use real fetched rate
         primary_sources: renewablePercentage > 25 ? ["Solar", "Natural Gas", "Nuclear"] : ["Natural Gas", "Solar", "Coal"],
         sustainability_score: Math.round(renewablePercentage * 1.5 + 20), // Rough calculation
         carbon_emissions_tons: Math.round(carbonEmissions),
         coordinates: metadata.coordinates,
-        consumption_per_capita: Math.round((countyConsumption / metadata.population) * 10) / 10,
+        consumption_per_capita: metadata.population > 0 ? Math.round((countyConsumption / metadata.population) * 10) / 10 : 0,
         renewable_capacity_mw: Math.round(countyGeneration * 0.3) // Estimate renewable capacity
       };
     });
@@ -157,7 +163,9 @@ export async function loadRealElectricityData(): Promise<MapData> {
     const stateTotals = {
       total_consumption: eiaData.stateTotal.totalDemand * 1000, // Convert MW to MWh
       total_population: Object.values(ARIZONA_COUNTY_METADATA).reduce((sum, county) => sum + county.population, 0),
-      avg_renewable_percentage: Math.round((eiaData.stateTotal.totalGeneration / eiaData.stateTotal.totalDemand) * 100 * 0.3), // Estimate renewable mix
+      avg_renewable_percentage: eiaData.stateTotal.totalDemand > 0
+        ? Math.round((eiaData.stateTotal.totalGeneration / eiaData.stateTotal.totalDemand) * 100 * 0.3)
+        : 0,
       total_emissions: Math.round(eiaData.stateTotal.totalDemand * 1000 * 0.4)
     };
 

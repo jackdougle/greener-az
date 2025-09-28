@@ -32,13 +32,13 @@ export default function CarbonFootprintPanel({
   };
 
   const getImpactColor = (percentage: number): string => {
-    if (percentage >= 50) return 'bg-green-100 text-green-800';
+    if (percentage >= 50) return 'bg-green-600 text-green-50';
     if (percentage >= 30) return 'bg-yellow-100 text-yellow-800';
     return 'bg-orange-100 text-orange-800';
   };
 
   return (
-    <Card className="border-0 shadow-lg bg-white/95 backdrop-blur">
+    <Card className="border-0 shadow-lg bg-card backdrop-blur">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center space-x-2">
           <Calculator className="w-5 h-5 text-green-600" />
@@ -55,25 +55,25 @@ export default function CarbonFootprintPanel({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <User className="w-4 h-4 text-blue-600" />
-                <h4 className="font-semibold text-slate-900">Per Person</h4>
+                <User className="w-4 h-4 text-primary" />
+                <h4 className="font-semibold text-foreground">Per Person</h4>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Annual</span>
-                  <span className="font-semibold">
+                  <span className="text-sm text-foreground/80">Annual</span>
+                  <span className="font-semibold text-foreground">
                     {estimate.perCapitaCarbonTonsPerYear.toFixed(2)} tons CO₂
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Monthly</span>
-                  <span className="font-semibold">
+                  <span className="text-sm text-foreground/80">Monthly</span>
+                  <span className="font-semibold text-foreground">
                     {formatNumber(estimate.perCapitaCarbonKgPerMonth)} kg CO₂
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Daily</span>
-                  <span className="font-semibold">
+                  <span className="text-sm text-foreground/80">Daily</span>
+                  <span className="font-semibold text-foreground">
                     {formatNumber(estimate.perCapitaCarbonPoundsPerDay)} lbs CO₂
                   </span>
                 </div>
@@ -82,24 +82,24 @@ export default function CarbonFootprintPanel({
 
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <Home className="w-4 h-4 text-purple-600" />
-                <h4 className="font-semibold text-slate-900">Per Household</h4>
+                <Home className="w-4 h-4 text-primary" />
+                <h4 className="font-semibold text-foreground">Per Household</h4>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Annual</span>
-                  <span className="font-semibold">
+                  <span className="text-sm text-foreground/80">Annual</span>
+                  <span className="font-semibold text-foreground">
                     {estimate.householdCarbonTonsPerYear.toFixed(2)} tons CO₂
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Monthly</span>
-                  <span className="font-semibold">
+                  <span className="text-sm text-foreground/80">Monthly</span>
+                  <span className="font-semibold text-foreground">
                     {formatNumber(estimate.householdCarbonKgPerMonth)} kg CO₂
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Daily</span>
+                  <span className="text-sm text-foreground/80">Daily</span>
                   <span className="font-semibold">
                     {formatNumber(estimate.householdCarbonPoundsPerDay)} lbs CO₂
                   </span>
@@ -111,35 +111,33 @@ export default function CarbonFootprintPanel({
 
         {/* Comparative Metrics */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-slate-900 flex items-center space-x-2">
+          <h4 className="font-semibold text-foreground flex items-center space-x-2">
             <TrendingDown className="w-4 h-4 text-red-600" />
             <span>Equivalent Impact (Per Person/Year)</span>
           </h4>
           <div className="grid grid-cols-1 gap-3">
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <Car className="w-4 h-4 text-gray-600" />
-                <span className="text-sm text-slate-700">Driving miles</span>
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                <span className="text-sm text-foreground/80">Driving miles</span>
               </div>
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-foreground">
                 {formatNumber(estimate.equivalentCarMilesPerYear)} miles
               </span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center space-x-2">
                 <TreePine className="w-4 h-4 text-green-600" />
-                <span className="text-sm text-slate-700">Trees needed to offset</span>
+                <span className="text-sm text-foreground/80">Trees needed to offset</span>
               </div>
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-foreground">
                 {formatNumber(estimate.equivalentTreesNeeded)} trees
               </span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center space-x-2">
                 <Fuel className="w-4 h-4 text-orange-600" />
-                <span className="text-sm text-slate-700">Gasoline burned</span>
+                <span className="text-sm text-foreground/80">Gasoline burned</span>
               </div>
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-foreground">
                 {formatNumber(estimate.equivalentGasolineGallons)} gallons
               </span>
             </div>
@@ -148,25 +146,25 @@ export default function CarbonFootprintPanel({
 
         {/* Renewable Impact */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-slate-900 flex items-center space-x-2">
+          <h4 className="font-semibold text-foreground flex items-center space-x-2">
             <Leaf className="w-4 h-4 text-green-600" />
             <span>Renewable Energy Impact</span>
           </h4>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">Renewable reduction</span>
+              <span className="text-sm text-foreground/80">Renewable reduction</span>
               <Badge className={getImpactColor(estimate.renewableImpactReduction)}>
                 {estimate.renewableImpactReduction.toFixed(1)}%
               </Badge>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Clean energy emissions:</span>
-              <span className="font-medium text-green-700">
+              <span className="text-foreground/80">Clean energy emissions:</span>
+              <span className="font-medium text-green-600 dark:text-green-400">
                 {formatNumber(estimate.renewableEmissions)} tons CO₂
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Fossil fuel emissions:</span>
+              <span className="text-foreground/80">Fossil fuel emissions:</span>
               <span className="font-medium text-red-700">
                 {formatNumber(estimate.nonRenewableEmissions)} tons CO₂
               </span>
@@ -175,9 +173,9 @@ export default function CarbonFootprintPanel({
         </div>
 
         {/* Action Items */}
-        <div className="bg-green-50 rounded-lg p-4">
-          <h4 className="font-semibold text-green-900 mb-2">Reduce Your Carbon Footprint</h4>
-          <ul className="text-sm text-green-800 space-y-1">
+        <div className="bg-green-500/10 rounded-lg p-4">
+          <h4 className="font-semibold text-foreground mb-2">Reduce Your Carbon Footprint</h4>
+          <ul className="text-sm text-foreground/80 space-y-1">
             <li>• Install rooftop solar panels (reduce by 50-80%)</li>
             <li>• Switch to an electric vehicle</li>
             <li>• Improve home energy efficiency</li>
@@ -187,7 +185,7 @@ export default function CarbonFootprintPanel({
         </div>
 
         {/* Methodology Note */}
-        <div className="text-xs text-slate-500 border-t pt-3">
+        <div className="text-xs text-muted-foreground border-t pt-3">
           <p>
             <strong>Calculation:</strong> Based on EPA emission factors, EIA grid mix data,
             and average Arizona household size (2.65 people). Renewable estimates include
