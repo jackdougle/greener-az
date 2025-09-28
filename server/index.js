@@ -10,7 +10,7 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 // Correct import based on the error messages and documentation
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'; 
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 
 const app = express();
 app.use(cors());
@@ -49,11 +49,11 @@ if (GEMINI_API_KEY) {
     ];
 
     // Get the specific model for generation with safety settings
-    model = genAI.getGenerativeModel({ 
+    model = genAI.getGenerativeModel({
       model: "gemini-2.5-pro",
       safetySettings,
     });
-    
+
     console.log('Successfully initialized Gemini Pro model with safety settings.');
   } catch (err) {
     console.error('Failed to initialize Gemini model:', err.message);
@@ -76,7 +76,7 @@ app.post('/api/chat', async (req, res) => {
     // A more robust system prompt to ensure factual, on-topic responses
     const systemPrompt = `
       (Keep in mind that markdown is NOT supported).
-      You are Catlin, a specialized AI assistant for the Arizona Energy Map website.
+      You are Cactina, a specialized AI assistant for the Arizona Energy Map website.
       Remain friendly, approachable, and professional in your responses. Respond like a normal human would, using natural language.
       You can be silly and lighthearted, but avoid jokes or humor that could be misinterpreted. You can be a little whimsical and fun, but avoid sarcasm or anything that could seem mean-spirited.
       Feel free to use Arizona-related emojis (🌵☀️🌄🏜️) to add warmth and friendliness to your replies.
@@ -106,7 +106,7 @@ app.post('/api/chat', async (req, res) => {
 
     const result = await model.generateContent(`${systemPrompt}\n\nUser message: "${message}"`);
     const response = await result.response;
-    
+
     // Check if the response was blocked by safety settings
     if (response.promptFeedback?.blockReason) {
       return res.json({ reply: "I'm sorry, but I can't respond to that. Let's stick to topics about Arizona's energy and climate." });
