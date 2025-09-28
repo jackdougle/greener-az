@@ -78,7 +78,7 @@ export default function ApiConfigurationNotice({
             </div>
 
             <div className="space-y-3">
-              <div className="bg-white/60 rounded-lg p-3 text-sm">
+              <div className="bg-card/60 rounded-lg p-3 text-sm">
                 <h4 className="font-semibold text-amber-900 mb-2 flex items-center space-x-2">
                   <Settings className="w-4 h-4" />
                   <span>Setup Instructions:</span>
@@ -131,12 +131,12 @@ export default function ApiConfigurationNotice({
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Info className="w-5 h-5 text-blue-600" />
+            <Info className="w-5 h-5 text-primary" />
             <div>
-              <p className="text-sm font-medium text-blue-900">
+              <p className="text-sm font-medium text-foreground">
                 API Key Configured
               </p>
-              <p className="text-xs text-blue-700">
+              <p className="text-xs text-foreground/80">
                 Set VITE_ENABLE_LIVE_DATA=true in .env.local to enable real-time data
               </p>
             </div>
@@ -145,7 +145,7 @@ export default function ApiConfigurationNotice({
             variant="ghost"
             size="sm"
             onClick={handleDismiss}
-            className="text-blue-700 hover:text-blue-900"
+            className="text-primary hover:text-primary/80"
           >
             ×
           </Button>

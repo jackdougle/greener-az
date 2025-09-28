@@ -414,8 +414,8 @@ export default function ElectricityMap() {
             <div className="absolute inset-0 w-12 h-12 border-4 border-emerald-300 border-t-transparent rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-slate-800 fade-in-up stagger-1">Loading Arizona Electricity Data</h3>
-            <p className="text-slate-600 fade-in-up stagger-2">Fetching real-time consumption and sustainability metrics...</p>
+            <h3 className="text-xl font-semibold text-foreground fade-in-up stagger-1">Loading Arizona Electricity Data</h3>
+            <p className="text-foreground/80 fade-in-up stagger-2">Fetching real-time consumption and sustainability metrics...</p>
             <div className="flex justify-center space-x-1 mt-4">
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -429,7 +429,7 @@ export default function ElectricityMap() {
 
   return (
     <div className="min-h-screen">
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 fixed top-0 left-0 w-full z-50 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
+      <header className="bg-card/80 backdrop-blur-md border-b border-border fixed top-0 left-0 w-full z-50 fade-in" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 slide-in-left">
@@ -437,8 +437,8 @@ export default function ElectricityMap() {
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Arizona Energy Map</h1>
-                <p className="text-sm text-slate-600">Interactive electricity usage & sustainability insights</p>
+                <h1 className="text-2xl font-bold text-foreground">Arizona Energy Map</h1>
+                <p className="text-sm text-foreground/80">Interactive electricity usage & sustainability insights</p>
               </div>
             </div>
             
@@ -463,8 +463,8 @@ export default function ElectricityMap() {
                   </>
                 ) : (
                   <>
-                    <WifiOff className="w-4 h-4 text-gray-400 transition-smooth" />
-                    <span className="text-sm text-gray-500">Static</span>
+                    <WifiOff className="w-4 h-4 text-foreground/60 transition-smooth" />
+                    <span className="text-sm text-foreground/60">Static</span>
                   </>
                 )}
               </div>
@@ -521,7 +521,7 @@ export default function ElectricityMap() {
 
           {/* Map - Full Width */}
           <div className="fade-in-scale stagger-2">
-            <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur hover-lift">
+            <Card className="overflow-hidden shadow-xl border-0 bg-card backdrop-blur hover-lift">
               <CardContent className="p-0">
                 <div className="h-[600px] relative map-tint">
                   <MapContainer
@@ -581,14 +581,14 @@ export default function ElectricityMap() {
                           }}
                         >
                           <Tooltip>
-                            <div className="p-2 bg-white/95 backdrop-blur rounded-lg shadow-lg border-0">
-                              <h4 className="font-bold text-slate-800 mb-1">{county.name} County</h4>
+                            <div className="p-2 bg-card/95 backdrop-blur rounded-lg shadow-lg border-0">
+                              <h4 className="font-bold text-foreground mb-1">{county.name} County</h4>
                               <div className="text-xs text-slate-600 space-y-0.5">
                                 <p>Population: {formatNumber(county.population)}</p>
                                 <p>Consumption: {formatNumber(county.consumption_mwh)} MWh</p>
                                 <p>Renewable: {county.renewable_percentage}%</p>
                               </div>
-                              <p className="text-xs text-blue-600 mt-2 font-medium">Click for details →</p>
+                              <p className="text-xs text-primary mt-2 font-medium">Click for details →</p>
                             </div>
                           </Tooltip>
                         </CircleMarker>

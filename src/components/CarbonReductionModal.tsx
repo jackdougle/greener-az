@@ -225,7 +225,7 @@ export default function CarbonReductionModal({ county, isOpen, onClose }: Carbon
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
+      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-card">
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center space-x-2">
@@ -270,24 +270,24 @@ export default function CarbonReductionModal({ county, isOpen, onClose }: Carbon
           {activeTab === 'programs' && (
             <div className="space-y-4">
               <div className="flex items-center space-x-2 mb-4">
-                <MapPin className="w-5 h-5 text-blue-600" />
+                <MapPin className="w-5 h-5 text-primary" />
                 <h3 className="text-lg font-semibold">Arizona Government Programs & Incentives</h3>
               </div>
 
               <div className="grid gap-4">
                 {governmentPrograms.map((program, index) => (
-                  <div key={index} className="border rounded-lg p-4 hover:bg-slate-50">
+                  <div key={index} className="border border-border rounded-lg p-4 hover:bg-muted">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-slate-900">{program.title}</h4>
-                        <p className="text-sm text-slate-600 mt-1">{program.description}</p>
+                        <h4 className="font-semibold text-foreground">{program.title}</h4>
+                        <p className="text-sm text-foreground/80 mt-1">{program.description}</p>
                       </div>
                       <Badge variant="outline" className="ml-2">
                         {program.type}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between mt-3">
-                      <span className="text-xs text-slate-500">Deadline: {program.deadline}</span>
+                      <span className="text-xs text-foreground/60">Deadline: {program.deadline}</span>
                       <Button
                         size="sm"
                         variant="outline"
@@ -314,12 +314,12 @@ export default function CarbonReductionModal({ county, isOpen, onClose }: Carbon
 
               <div className="grid gap-3">
                 {seasonalTips[season as keyof typeof seasonalTips].map((tip, index) => (
-                  <div key={index} className="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg">
-                    <div className="text-blue-600 mt-1">
+                  <div key={index} className="flex items-start space-x-3 p-3 bg-muted rounded-lg">
+                    <div className="text-primary mt-1">
                       {tip.icon}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-slate-900">{tip.tip}</p>
+                      <p className="text-sm font-medium text-foreground">{tip.tip}</p>
                       <p className="text-xs text-green-700 mt-1">💰 Potential savings: {tip.savings}</p>
                     </div>
                   </div>
@@ -327,7 +327,7 @@ export default function CarbonReductionModal({ county, isOpen, onClose }: Carbon
               </div>
 
               <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-2">Why These Tips Work in Arizona</h4>
+                <h4 className="font-semibold text-foreground mb-2">Why These Tips Work in Arizona</h4>
                 <p className="text-sm text-blue-800">
                   Arizona's desert climate requires specific strategies. Our {season} recommendations
                   account for extreme temperatures, low humidity, and high solar radiation typical

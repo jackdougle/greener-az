@@ -37,7 +37,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
   const { carbonFootprint } = county;
 
   return (
-    <Card className="border-0 shadow-lg bg-white/95 backdrop-blur">
+    <Card className="border-0 shadow-lg bg-card backdrop-blur">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2 text-lg">
           <Calculator className="w-5 h-5 text-green-600" />
@@ -50,46 +50,46 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
           {/* Column 1: Key Metrics */}
-          <div className="bg-slate-50 rounded-lg p-3">
-            <h4 className="font-semibold text-slate-900 mb-2 text-sm">Annual Emissions</h4>
+          <div className="bg-muted rounded-lg p-3">
+            <h4 className="font-semibold text-foreground mb-2 text-sm">Annual Emissions</h4>
             <div className="space-y-1">
               <div className="text-center">
-                <div className="text-lg font-bold text-blue-900">
+                <div className="text-lg font-bold text-foreground">
                   {carbonFootprint.perCapitaCarbonTonsPerYear.toFixed(1)}
                 </div>
-                <div className="text-xs text-blue-700">tons CO₂ per person</div>
+                <div className="text-xs text-foreground/80">tons CO₂ per person</div>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-purple-900">
+                <div className="text-lg font-bold text-foreground">
                   {carbonFootprint.householdCarbonTonsPerYear.toFixed(1)}
                 </div>
-                <div className="text-xs text-purple-700">tons CO₂ per household</div>
+                <div className="text-xs text-foreground/80">tons CO₂ per household</div>
               </div>
             </div>
           </div>
 
           {/* Column 2: What This Means */}
-          <div className="bg-slate-50 rounded-lg p-3">
-            <h4 className="font-semibold text-slate-900 mb-2 text-sm">Per Person Equivalent</h4>
+          <div className="bg-muted rounded-lg p-3">
+            <h4 className="font-semibold text-foreground mb-2 text-sm">Per Person Equivalent</h4>
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-1">
-                  <Car className="w-3 h-3 text-gray-600" />
-                  <span className="text-slate-700">Driving</span>
+                  <Car className="w-3 h-3 text-foreground/60" />
+                  <span className="text-foreground/80">Driving</span>
                 </div>
                 <span className="font-semibold">{formatNumber(carbonFootprint.equivalentCarMilesPerYear)} mi/yr</span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-1">
                   <TreePine className="w-3 h-3 text-green-600" />
-                  <span className="text-slate-700">Trees</span>
+                  <span className="text-foreground/80">Trees</span>
                 </div>
                 <span className="font-semibold">{formatNumber(carbonFootprint.equivalentTreesNeeded)} to offset</span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-1">
                   <Fuel className="w-3 h-3 text-orange-600" />
-                  <span className="text-slate-700">Gasoline</span>
+                  <span className="text-foreground/80">Gasoline</span>
                 </div>
                 <span className="font-semibold">{formatNumber(carbonFootprint.equivalentGasolineGallons)} gal/yr</span>
               </div>
@@ -122,8 +122,8 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
 
           {/* Column 4: Action Items */}
           <div className="bg-blue-50 rounded-lg p-3">
-            <h4 className="font-semibold text-blue-900 mb-2 text-sm">Reduce Your Impact</h4>
-            <ul className="text-xs text-blue-800 space-y-0.5 mb-3">
+            <h4 className="font-semibold text-foreground mb-2 text-sm">Reduce Your Impact</h4>
+            <ul className="text-xs text-foreground/80 space-y-0.5 mb-3">
               <li>• AZ Solar Tax Credit (25%)</li>
               <li>• Utility rebate programs</li>
               <li>• Energy efficiency audits</li>
@@ -142,7 +142,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
         </div>
 
         {/* Methodology Note - Compact */}
-        <div className="text-xs text-slate-500 mt-3 pt-2 border-t">
+        <div className="text-xs text-foreground/60 mt-3 pt-2 border-t border-border">
           <p>
             <strong>Note:</strong> Based on EPA emission factors, Arizona household size (2.65), and lifecycle emissions for renewables.
           </p>

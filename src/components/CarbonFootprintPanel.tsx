@@ -38,7 +38,7 @@ export default function CarbonFootprintPanel({
   };
 
   return (
-    <Card className="border-0 shadow-lg bg-white/95 backdrop-blur">
+    <Card className="border-0 shadow-lg bg-card backdrop-blur">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center space-x-2">
           <Calculator className="w-5 h-5 text-green-600" />
@@ -55,24 +55,24 @@ export default function CarbonFootprintPanel({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <User className="w-4 h-4 text-blue-600" />
-                <h4 className="font-semibold text-slate-900">Per Person</h4>
+                <User className="w-4 h-4 text-primary" />
+                <h4 className="font-semibold text-foreground">Per Person</h4>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Annual</span>
+                  <span className="text-sm text-foreground/80">Annual</span>
                   <span className="font-semibold">
                     {estimate.perCapitaCarbonTonsPerYear.toFixed(2)} tons CO₂
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Monthly</span>
+                  <span className="text-sm text-foreground/80">Monthly</span>
                   <span className="font-semibold">
                     {formatNumber(estimate.perCapitaCarbonKgPerMonth)} kg CO₂
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Daily</span>
+                  <span className="text-sm text-foreground/80">Daily</span>
                   <span className="font-semibold">
                     {formatNumber(estimate.perCapitaCarbonPoundsPerDay)} lbs CO₂
                   </span>
@@ -87,19 +87,19 @@ export default function CarbonFootprintPanel({
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Annual</span>
+                  <span className="text-sm text-foreground/80">Annual</span>
                   <span className="font-semibold">
                     {estimate.householdCarbonTonsPerYear.toFixed(2)} tons CO₂
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Monthly</span>
+                  <span className="text-sm text-foreground/80">Monthly</span>
                   <span className="font-semibold">
                     {formatNumber(estimate.householdCarbonKgPerMonth)} kg CO₂
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Daily</span>
+                  <span className="text-sm text-foreground/80">Daily</span>
                   <span className="font-semibold">
                     {formatNumber(estimate.householdCarbonPoundsPerDay)} lbs CO₂
                   </span>
