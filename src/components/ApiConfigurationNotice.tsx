@@ -127,7 +127,7 @@ export default function ApiConfigurationNotice({
 
   // API is configured but not enabled
   return (
-    <Card className="border-blue-200 bg-blue-50 fade-in">
+    <Card className="fade-in" style={{ backgroundColor: 'hsl(var(--arizona-tips-bg))', border: '1px solid hsl(var(--arizona-tips-border))' }}>
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">

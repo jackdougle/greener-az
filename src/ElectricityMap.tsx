@@ -453,7 +453,7 @@ export default function ElectricityMap() {
                     <Wifi className="w-4 h-4 text-green-600 transition-smooth" />
                     <div className="flex items-center space-x-1">
                       <div className="w-2 h-2 bg-green-500 rounded-full pulse-soft"></div>
-                      <span className="text-sm text-green-700 font-medium">Live</span>
+                      <span className="text-sm text-green-600 dark:text-green-400 font-medium">Live</span>
                     </div>
                   </>
                 ) : isUsingFallback ? (

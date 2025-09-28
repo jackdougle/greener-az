@@ -27,9 +27,9 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
   };
 
   const getImpactColor = (percentage: number): string => {
-    if (percentage >= 50) return 'bg-green-100 text-green-800';
-    if (percentage >= 30) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-orange-100 text-orange-800';
+    if (percentage >= 50) return 'bg-green-600 text-green-50';
+    if (percentage >= 30) return 'bg-yellow-500 text-foreground';
+    return 'bg-orange-500 text-foreground';
   };
 
   if (!county.carbonFootprint) return null;
@@ -97,31 +97,31 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
           </div>
 
           {/* Column 3: Renewable Impact */}
-          <div className="bg-green-50 rounded-lg p-3">
-            <h4 className="font-semibold text-green-900 mb-2 text-sm">Clean Energy Impact</h4>
+          <div className="rounded-lg p-3" style={{ backgroundColor: 'hsl(var(--clean-energy-bg))', border: '1px solid hsl(var(--clean-energy-border))' }}>
+            <h4 className="font-semibold text-foreground mb-2 text-sm">Clean Energy Impact</h4>
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-green-700">Emissions saved</span>
+                <span className="text-xs text-foreground/80">Emissions saved</span>
                 <Badge className={`${getImpactColor(carbonFootprint.renewableImpactReduction)} text-xs px-1 py-0`}>
                   -{carbonFootprint.renewableImpactReduction.toFixed(0)}%
                 </Badge>
               </div>
-              <div className="text-xs text-green-800 mb-1">
+              <div className="text-xs text-foreground/80 mb-1">
                 {county.renewable_percentage.toFixed(1)}% renewable grid
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-green-700">Clean:</span>
+                <span className="text-green-600 dark:text-green-400">Clean:</span>
                 <span className="font-medium">{formatNumber(carbonFootprint.renewableEmissions)} tons</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-red-700">Fossil:</span>
+                <span className="text-red-600 dark:text-red-400">Fossil:</span>
                 <span className="font-medium">{formatNumber(carbonFootprint.nonRenewableEmissions)} tons</span>
               </div>
             </div>
           </div>
 
           {/* Column 4: Action Items */}
-          <div className="bg-blue-50 rounded-lg p-3">
+          <div className="rounded-lg p-3" style={{ backgroundColor: 'hsl(var(--reduce-impact-bg))', border: '1px solid hsl(var(--reduce-impact-border))' }}>
             <h4 className="font-semibold text-foreground mb-2 text-sm">Reduce Your Impact</h4>
             <ul className="text-xs text-foreground/80 space-y-0.5 mb-3">
               <li>• AZ Solar Tax Credit (25%)</li>

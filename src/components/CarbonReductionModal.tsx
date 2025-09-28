@@ -306,7 +306,7 @@ export default function CarbonReductionModal({ county, isOpen, onClose }: Carbon
           {activeTab === 'seasonal' && (
             <div className="space-y-4">
               <div className="flex items-center space-x-2 mb-4">
-                <Calendar className="w-5 h-5 text-orange-600" />
+                <Calendar className="w-5 h-5 text-primary" />
                 <h3 className="text-lg font-semibold">
                   {season.charAt(0).toUpperCase() + season.slice(1)} Tips for Arizona
                 </h3>
@@ -320,15 +320,15 @@ export default function CarbonReductionModal({ county, isOpen, onClose }: Carbon
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-foreground">{tip.tip}</p>
-                      <p className="text-xs text-green-700 mt-1">💰 Potential savings: {tip.savings}</p>
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-1">💰 Potential savings: {tip.savings}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+              <div className="mt-6 p-4 rounded-lg" style={{ backgroundColor: 'hsl(var(--arizona-tips-bg))', border: '1px solid hsl(var(--arizona-tips-border))' }}>
                 <h4 className="font-semibold text-foreground mb-2">Why These Tips Work in Arizona</h4>
-                <p className="text-sm text-blue-800">
+                <p className="text-sm text-foreground/80">
                   Arizona's desert climate requires specific strategies. Our {season} recommendations
                   account for extreme temperatures, low humidity, and high solar radiation typical
                   of the Sonoran Desert region.
@@ -347,40 +347,40 @@ export default function CarbonReductionModal({ county, isOpen, onClose }: Carbon
               <div className="grid gap-4">
                 {immediateActions.map((action, index) => (
                   <div key={index} className="border-l-4 border-green-500 pl-4 py-3">
-                    <h4 className="font-semibold text-slate-900 mb-1">{action.action}</h4>
-                    <p className="text-sm text-slate-600 mb-2">{action.provider}</p>
+                    <h4 className="font-semibold text-foreground mb-1">{action.action}</h4>
+                    <p className="text-sm text-foreground/80 mb-2">{action.provider}</p>
                     <div className="flex items-center space-x-4 text-xs">
-                      <span className="text-green-700 font-medium">Impact: {action.impact}</span>
-                      <span className="text-blue-700">Timeline: {action.timeframe}</span>
+                      <span className="text-green-600 dark:text-green-400 font-medium">Impact: {action.impact}</span>
+                      <span className="text-foreground/70">Timeline: {action.timeframe}</span>
                     </div>
                   </div>
                 ))}
               </div>
 
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-green-50 rounded-lg">
-                  <h4 className="font-semibold text-green-900 mb-2">
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'hsl(var(--clean-energy-bg))', border: '1px solid hsl(var(--clean-energy-border))' }}>
+                  <h4 className="font-semibold text-foreground mb-2">
                     <Globe className="w-4 h-4 inline mr-1" />
                     Online Resources
                   </h4>
-                  <ul className="text-sm text-green-800 space-y-1">
-                    <li>• <strong>Solar Calculator:</strong> <a href="https://pvwatts.nrel.gov/" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-900">pvwatts.nrel.gov</a></li>
-                    <li>• <strong>Energy Star:</strong> <a href="https://www.energystar.gov/" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-900">energystar.gov</a></li>
-                    <li>• <strong>Solar Quotes:</strong> <a href="https://www.energysage.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-900">energysage.com</a></li>
-                    <li>• <strong>Home Energy Audits:</strong> <a href="https://www.energy.gov/energysaver/weatherize/energy-audits" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-900">energy.gov</a></li>
+                  <ul className="text-sm text-foreground/80 space-y-1">
+                    <li>• <strong>Solar Calculator:</strong> <a href="https://pvwatts.nrel.gov/" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-600 dark:hover:text-green-400">pvwatts.nrel.gov</a></li>
+                    <li>• <strong>Energy Star:</strong> <a href="https://www.energystar.gov/" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-600 dark:hover:text-green-400">energystar.gov</a></li>
+                    <li>• <strong>Solar Quotes:</strong> <a href="https://www.energysage.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-600 dark:hover:text-green-400">energysage.com</a></li>
+                    <li>• <strong>Home Energy Audits:</strong> <a href="https://www.energy.gov/energysaver/weatherize/energy-audits" target="_blank" rel="noopener noreferrer" className="underline hover:text-green-600 dark:hover:text-green-400">energy.gov</a></li>
                   </ul>
                 </div>
 
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-2">
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'hsl(var(--arizona-tips-bg))', border: '1px solid hsl(var(--arizona-tips-border))' }}>
+                  <h4 className="font-semibold text-foreground mb-2">
                     <Phone className="w-4 h-4 inline mr-1" />
                     Contact Your Utility
                   </h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
-                    <li>• <strong>APS:</strong> <a href="https://www.aps.com/en/contact" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-900">aps.com/contact</a></li>
-                    <li>• <strong>TEP:</strong> <a href="https://www.tep.com/contact/" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-900">tep.com/contact</a></li>
-                    <li>• <strong>SRP:</strong> <a href="https://www.srpnet.com/contact/" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-900">srpnet.com/contact</a></li>
-                    <li>• <strong>Find Local Solar:</strong> <a href="https://www.energysage.com/solar-quotes/" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-900">EnergySage.com</a></li>
+                  <ul className="text-sm text-foreground/80 space-y-1">
+                    <li>• <strong>APS:</strong> <a href="https://www.aps.com/en/contact" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">aps.com/contact</a></li>
+                    <li>• <strong>TEP:</strong> <a href="https://www.tep.com/contact/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">tep.com/contact</a></li>
+                    <li>• <strong>SRP:</strong> <a href="https://www.srpnet.com/contact/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">srpnet.com/contact</a></li>
+                    <li>• <strong>Find Local Solar:</strong> <a href="https://www.energysage.com/solar-quotes/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">EnergySage.com</a></li>
                   </ul>
                 </div>
               </div>

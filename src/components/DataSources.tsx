@@ -62,7 +62,7 @@ export default function DataSources({ sources, lastUpdated, isRealTime = false, 
             );
           })}
         </div>
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+        <div className="mt-4 p-3 rounded-lg" style={{ backgroundColor: 'hsl(var(--arizona-tips-bg))', border: '1px solid hsl(var(--arizona-tips-border))' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Clock className="w-4 h-4 text-primary" />
@@ -73,7 +73,7 @@ export default function DataSources({ sources, lastUpdated, isRealTime = false, 
             {isRealTime && !isUsingFallback ? (
               <div className="flex items-center space-x-1">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-green-700">Connected</span>
+                <span className="text-xs text-green-600 dark:text-green-400">Connected</span>
               </div>
             ) : isUsingFallback ? (
               <div className="flex items-center space-x-1">

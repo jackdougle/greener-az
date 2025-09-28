@@ -35,7 +35,7 @@
 @layer base {
   /* Dark mode variables (Tailwind is configured for class-based dark mode) */
   :root.dark {
-  --card: 0 0% 4%; /* dark gray cards in dark mode */
+  --card: 109 100% 4%; /* dark gray cards in dark mode */
     --foreground: 220 40% 98%;
   /* use a dark gray background for dark mode */
   --background: 340 100% 11%; /* dark gray */
@@ -75,8 +75,24 @@
     --panel-alpha: 0.75;
     /* default panel border color: dark green */
     --panel-border: 142 45% 60%;
-    /* map tint control: alpha for the green overlay */
-    --map-tint-alpha: 0.75;
+    /* map tint control: alpha for the green overlay (subtle by default) */
+    --map-tint-alpha: 0.09;
+
+    /* Special card colors for Clean Energy Impact */
+    --clean-energy-bg: 142 76% 95%;
+    --clean-energy-border: 142 76% 80%;
+
+    /* Special card colors for Reduce Your Impact */
+    --reduce-impact-bg: 210 100% 97%;
+    --reduce-impact-border: 210 100% 85%;
+
+    /* Special card colors for Opportunities */
+    --opportunities-bg: 220 100% 97%;
+    --opportunities-border: 220 100% 85%;
+
+    /* Special card colors for Arizona Tips/Info */
+    --arizona-tips-bg: 200 100% 97%;
+    --arizona-tips-border: 200 100% 85%;
   }
 
   :root.dark {
@@ -84,7 +100,20 @@
     --panel-alpha: 0.7;
     /* slightly brighter green for dark mode so border reads on dark backgrounds */
     --panel-border: 340 100% 8%;
-    --map-tint-alpha: 0.6;
+    --map-tint-alpha: 0.05;
+
+    /* Special card colors for dark mode */
+    --clean-energy-bg: 142 60% 15%;
+    --clean-energy-border: 142 60% 25%;
+
+    --reduce-impact-bg: 210 80% 15%;
+    --reduce-impact-border: 210 80% 25%;
+
+    --opportunities-bg: 220 80% 15%;
+    --opportunities-border: 220 80% 25%;
+
+    --arizona-tips-bg: 200 80% 15%;
+    --arizona-tips-border: 200 80% 25%;
   }
 
   /* Override Tailwind-generated utility colors for card/popover to include alpha.
@@ -121,11 +150,11 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    /* make the green overlay dominate the tiles */
-    mix-blend-mode: multiply;
-    background: rgba(144,238,144,var(--map-tint-alpha));
-    /* sit above tiles (tilePane ~200) but below markers (markerPane ~600) */
-    z-index: 300;
+    /* simple solid green overlay to tint the tiles */
+    mix-blend-mode: normal; /* avoid unpredictable color math */
+    background: rgba(226, 29, 112, var(--map-tint-alpha)); /* subtle green overlay */
+    /* sit above tiles (tilePane ~200) but below markers/popups (markerPane ~600) */
+    z-index: 450;
   }
 
   /* Force Leaflet tile images to be shifted green in light mode. Using !important
@@ -136,12 +165,36 @@
 
   /* Light mode: push tiles toward a bright green */
   :root .map-tint .leaflet-tile {
-    filter: hue-rotate(85deg) saturate(1.6) brightness(1.02) !important;
+    /* milder hue shift for a gentle green tint */
+    filter: hue-rotate(60deg) saturate(1.12) brightness(1) !important;
   }
 
   /* Dark mode: keep the original dark tiles (no green shift) */
   :root.dark .map-tint .leaflet-tile {
     filter: none !important;
+  }
+
+  /* Leaflet tooltip styling for dark mode */
+  :root.dark .leaflet-tooltip {
+    background-color: #0b1d10 !important;
+    border: 1px solid #1a291e !important;
+    color: #ffffff !important;
+  }
+
+  :root.dark .leaflet-tooltip-top:before {
+    border-top-color: #1a291e !important;
+  }
+
+  :root.dark .leaflet-tooltip-bottom:before {
+    border-bottom-color: #1a291e !important;
+  }
+
+  :root.dark .leaflet-tooltip-left:before {
+    border-left-color: #1a291e !important;
+  }
+
+  :root.dark .leaflet-tooltip-right:before {
+    border-right-color: #1a291e !important;
   }
 }
 

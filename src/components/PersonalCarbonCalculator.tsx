@@ -112,7 +112,7 @@ export default function PersonalCarbonCalculator() {
 
             {/* Annual Totals */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-50 rounded-lg p-4">
+              <div className="rounded-lg p-4" style={{ backgroundColor: 'hsl(var(--reduce-impact-bg))', border: '1px solid hsl(var(--reduce-impact-border))' }}>
                 <div className="flex items-center space-x-2 mb-2">
                   <Home className="w-5 h-5 text-primary" />
                   <span className="font-semibold text-foreground">Household Total</span>
@@ -166,14 +166,14 @@ export default function PersonalCarbonCalculator() {
 
             {/* Renewable Impact */}
             <div className="bg-green-50 rounded-lg p-4">
-              <h4 className="font-semibold text-green-900 mb-2">Renewable Energy Impact</h4>
+              <h4 className="font-semibold text-foreground mb-2">Renewable Energy Impact</h4>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-green-700">Emissions reduction from renewables</span>
-                <Badge className="bg-green-100 text-green-800">
+                <span className="text-green-600 dark:text-green-400">Emissions reduction from renewables</span>
+                <Badge className="bg-green-600 text-green-50">
                   -{result.renewableImpactReduction.toFixed(1)}%
                 </Badge>
               </div>
-              <p className="text-sm text-green-800">
+              <p className="text-sm text-foreground/80">
                 Switching to 100% renewable energy could reduce your footprint by{' '}
                 {(100 - result.renewableImpactReduction).toFixed(1)}% more!
               </p>

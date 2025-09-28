@@ -79,7 +79,7 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
           <div className="space-y-3 fade-in-up stagger-1">
             <h4 className="font-semibold text-foreground text-sm">Key Metrics</h4>
             <div className="space-y-2">
-              <div className="transition-smooth hover:bg-blue-50 -mx-2 px-2 py-2 rounded-lg">
+              <div className="transition-smooth hover:bg-muted -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-foreground/70 uppercase tracking-wide">Population</p>
                 <p className="text-lg font-bold text-foreground">{formatNumber(county.population)}</p>
               </div>
@@ -141,7 +141,7 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
           <div className="space-y-3 fade-in-up stagger-3">
             <h4 className="font-semibold text-foreground text-sm">Cities & Sources</h4>
             <div className="space-y-2">
-              <div className="transition-smooth hover:bg-blue-50 -mx-2 px-2 py-2 rounded-lg">
+              <div className="transition-smooth hover:bg-muted -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-foreground/70 uppercase tracking-wide">Major Cities</p>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {county.major_cities?.slice(0, 3).map((city, index) => (
@@ -172,7 +172,7 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
                   })}
                 </div>
               </div>
-              <div className="transition-smooth hover:bg-red-50 -mx-2 px-2 py-2 rounded-lg">
+              <div className="transition-smooth hover:bg-muted -mx-2 px-2 py-2 rounded-lg">
                 <p className="text-xs font-medium text-foreground/70 uppercase tracking-wide">Carbon Emissions</p>
                 <p className="text-lg font-bold text-foreground">{formatNumber(county.carbon_emissions_tons)} tons CO₂</p>
               </div>
@@ -186,7 +186,7 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
 
               {/* Grid Status - Real-time only */}
               {county.isRealTime && county.gridStress && (
-                <div className="transition-smooth hover:bg-yellow-50 -mx-2 px-2 py-2 rounded-lg fade-in">
+                <div className="transition-smooth hover:bg-muted -mx-2 px-2 py-2 rounded-lg fade-in">
                   <p className="text-xs font-medium text-foreground/70 uppercase tracking-wide">Grid Status</p>
                   <div className="flex items-center space-x-2 mt-1">
                     <AlertTriangle className="w-3 h-3 text-foreground/60" />
@@ -207,40 +207,40 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
                 <div className="bg-green-50 rounded-lg p-2 hover-lift transition-smooth fade-in stagger-1">
                   <div className="flex items-center space-x-1 mb-1">
                     <Calculator className="w-3 h-3 text-green-600 hover-scale transition-bounce" />
-                    <span className="text-xs font-medium text-green-900">Carbon Footprint</span>
+                    <span className="text-xs font-medium text-foreground">Carbon Footprint</span>
                   </div>
                   <div className="text-xs space-y-1">
-                    <div className="transition-smooth hover:bg-green-100 -mx-1 px-1 py-0.5 rounded">
-                      <span className="text-green-700">Per person:</span>
-                      <span className="font-semibold text-green-900 ml-1">
+                    <div className="transition-smooth hover:bg-muted -mx-1 px-1 py-0.5 rounded">
+                      <span className="text-green-600 dark:text-green-400">Per person:</span>
+                      <span className="font-semibold text-foreground ml-1">
                         {county.carbonFootprint.perCapitaCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
                       </span>
                     </div>
-                    <div className="transition-smooth hover:bg-green-100 -mx-1 px-1 py-0.5 rounded">
-                      <span className="text-green-700">Per household:</span>
-                      <span className="font-semibold text-green-900 ml-1">
+                    <div className="transition-smooth hover:bg-muted -mx-1 px-1 py-0.5 rounded">
+                      <span className="text-green-600 dark:text-green-400">Per household:</span>
+                      <span className="font-semibold text-foreground ml-1">
                         {county.carbonFootprint.householdCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
                       </span>
                     </div>
-                    <div className="text-xs text-green-800 mt-1">💡 See detailed breakdown above</div>
+                    <div className="text-xs text-foreground/80 mt-1">💡 See detailed breakdown above</div>
                   </div>
                 </div>
               )}
 
               {/* Quick Recommendations */}
-              <div className="bg-blue-50 rounded-lg p-2 hover-lift transition-smooth fade-in stagger-2">
+              <div className="rounded-lg p-2" style={{ backgroundColor: 'hsl(var(--opportunities-bg))', border: '1px solid hsl(var(--opportunities-border))' }}>
                 <h5 className="text-xs font-semibold text-foreground mb-1">Opportunities</h5>
                 <ul className="text-xs text-foreground/80 space-y-0.5">
                   {county.renewable_percentage < 30 && (
-                    <li className="transition-smooth hover:bg-blue-100 -mx-1 px-1 py-0.5 rounded">• Increase solar capacity</li>
+                    <li className="transition-smooth hover:bg-muted -mx-1 px-1 py-0.5 rounded">• Increase solar capacity</li>
                   )}
                   {county.consumption_per_capita > 15 && (
-                    <li className="transition-smooth hover:bg-blue-100 -mx-1 px-1 py-0.5 rounded">• Energy efficiency programs</li>
+                    <li className="transition-smooth hover:bg-muted -mx-1 px-1 py-0.5 rounded">• Energy efficiency programs</li>
                   )}
                   {county.carbon_emissions_tons > 1000000 && (
-                    <li className="transition-smooth hover:bg-blue-100 -mx-1 px-1 py-0.5 rounded">• Transition to renewables</li>
+                    <li className="transition-smooth hover:bg-muted -mx-1 px-1 py-0.5 rounded">• Transition to renewables</li>
                   )}
-                  <li className="transition-smooth hover:bg-blue-100 -mx-1 px-1 py-0.5 rounded">• Expand solar incentives</li>
+                  <li className="transition-smooth hover:bg-muted -mx-1 px-1 py-0.5 rounded">• Expand solar incentives</li>
                 </ul>
               </div>
             </div>
