@@ -39,7 +39,7 @@ export default function MapLegend({ mapStyle }: MapLegendProps) {
   const currentLegend = legends[mapStyle];
 
   return (
-  <Card className="absolute bottom-4 left-4 z-[1000] bg-popover/95 backdrop-blur shadow-lg border border-border">
+  <Card className="absolute bottom-4 left-4 z-[1000] bg-card/95 backdrop-blur shadow-lg border border-border">
       <CardContent className="p-4">
         <h4 className="font-semibold text-sm mb-3 text-foreground">
           {currentLegend.title}

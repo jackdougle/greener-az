@@ -29,7 +29,7 @@ export default function MapControls({ mapStyle, setMapStyle }) {
   ];
 
   return (
-    <div className="flex items-center space-x-2 bg-slate-100 rounded-xl p-1">
+    <div className="flex items-center space-x-2 bg-green-300 rounded-xl p-1">
       {controls.map((control) => (
         <Button
           key={control.id}
@@ -38,8 +38,8 @@ export default function MapControls({ mapStyle, setMapStyle }) {
           onClick={() => setMapStyle(control.id)}
           className={`flex items-center space-x-2 transition-all duration-200 ${
             mapStyle === control.id 
-              ? 'bg-white shadow-md' 
-              : 'hover:bg-slate-200'
+              ? 'bg-green-200 shadow-md' 
+              : 'hover:bg-green-200'
           }`}
         >
           <control.icon className="w-4 h-4" />

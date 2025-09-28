@@ -519,13 +519,53 @@ export default function ElectricityMap() {
           />
         )}
 
-        <div className="grid lg:grid-cols-4 gap-6 mt-6">
-          <div className="lg:col-span-3">
+        <div className="grid grid-cols-1 gap-6 mt-6">
+          <div>
+            {showPanel && selectedCounty ? (
+              <CountyDetailsPanel 
+                county={selectedCounty}
+                onClose={() => setShowPanel(false)}
+              />
+            ) : (
+              <Card className="shadow-xl border-0 bg-card backdrop-blur">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 -mb-2">
+                        <span className="text-foreground">Select a County</span>
+                        <MapPin className="w-5 h-5 text-primary" />
+                        
+                      </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-foreground/80 mb-4">
+                      Click on any county circle to view detailed electricity usage,
+                      renewable energy data, and sustainability insights.
+                    </p>
+                    <div className="flex flex-row gap-3">
+                      <div className="flex items-center space-x-2 text-sm">
+                        <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                        <span>High consumption</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                        <span>Moderate consumption</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                        <span>Low consumption</span>
+                      </div>
+                    </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+          <div>
             <Card className="overflow-hidden shadow-xl border-0 bg-card backdrop-blur">
               <CardContent className="p-0">
                 <div className="h-[600px] relative">
-                  <div style={{ height: '100%', width: '100%', filter: tileFilter }}> 
-                    <MapContainer
+          <div style={{ height: '100%', width: '100%', filter: tileFilter }} className="map-tint"> 
+            <MapContainer
                     center={[34.0489, -111.0937]}
                     zoom={7}
                     style={{ height: '100%', width: '100%' }}
@@ -594,50 +634,12 @@ export default function ElectricityMap() {
                     
                     <ZoomControl position="topright" />
                   </MapContainer>
-                  </div>
+                </div>
                   
                   <MapLegend mapStyle={mapStyle} />
                 </div>
               </CardContent>
             </Card>
-          </div>
-
-          <div className="lg:col-span-1">
-            {showPanel && selectedCounty ? (
-              <CountyDetailsPanel 
-                county={selectedCounty}
-                onClose={() => setShowPanel(false)}
-              />
-            ) : (
-              <Card className="shadow-xl border-0 bg-card backdrop-blur">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                      <span className="text-foreground">Select a County</span>
-                      <MapPin className="w-5 h-5 text-primary" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-foreground/80 mb-4">
-                      Click on any county circle to view detailed electricity usage,
-                      renewable energy data, and sustainability insights.
-                    </p>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                      <span>High consumption</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                      <span>Moderate consumption</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                      <span>Low consumption</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
 

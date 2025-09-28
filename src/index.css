@@ -23,8 +23,8 @@
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96%;
     --accent-foreground: 210 40% 15%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 210 84.2% 60.2%;
+    --destructive-foreground: 210 40% 8%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 210 40% 15%;
@@ -69,6 +69,8 @@
     --panel-alpha: 0.75;
     /* default panel border color: dark green */
     --panel-border: 142 45% 60%;
+    /* map tint control: alpha for the green overlay */
+    --map-tint-alpha: 0.75;
   }
 
   :root.dark {
@@ -76,6 +78,7 @@
     --panel-alpha: 0.7;
     /* slightly brighter green for dark mode so border reads on dark backgrounds */
     --panel-border: 340 100% 8%;
+    --map-tint-alpha: 0.6;
   }
 
   /* Override Tailwind-generated utility colors for card/popover to include alpha.
@@ -101,5 +104,37 @@
   .panel {
     background-color: hsl(var(--card) / var(--panel-alpha)) !important;
     border: 2px solid hsl(var(--panel-border)) !important;
+  }
+
+  /* map tint overlay using pseudo-element to avoid extra DOM nodes in JSX */
+  .map-tint {
+    position: relative;
+  }
+  .map-tint::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* make the green overlay dominate the tiles */
+    mix-blend-mode: multiply;
+    background: rgba(144,238,144,var(--map-tint-alpha));
+    /* sit above tiles (tilePane ~200) but below markers (markerPane ~600) */
+    z-index: 300;
+  }
+
+  /* Force Leaflet tile images to be shifted green in light mode. Using !important
+     to ensure the filter takes effect over any inline styles produced by Leaflet. */
+  .map-tint .leaflet-tile {
+    transition: filter 220ms linear;
+  }
+
+  /* Light mode: push tiles toward a bright green */
+  :root .map-tint .leaflet-tile {
+    filter: hue-rotate(85deg) saturate(1.6) brightness(1.02) !important;
+  }
+
+  /* Dark mode: keep the original dark tiles (no green shift) */
+  :root.dark .map-tint .leaflet-tile {
+    filter: none !important;
   }
 }

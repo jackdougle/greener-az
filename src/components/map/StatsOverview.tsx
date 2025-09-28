@@ -75,7 +75,7 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
                   </p>
                 </div>
                 <div className={`w-12 h-12 rounded-xl ${stat.gradient} flex items-center justify-center`}>
-                  <stat.icon className="w-6 h-6 text-white" />
+                  <stat.icon className="w-6 h-6 text-black" />
                 </div>
               </div>
             </CardContent>
@@ -89,7 +89,7 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
           <CardContent className="p-6">
             <h3 className="font-semibold text-foreground mb-4">Sustainability Leader</h3>
             <div className="space-y-2">
-              <p className="text-2xl font-bold text-emerald-600">
+              <p className="text-2xl font-bold text-emerald-800">
                 {topRenewableCounty.name || 'N/A'} County
               </p>
               <p className="text-sm text-foreground/80">
