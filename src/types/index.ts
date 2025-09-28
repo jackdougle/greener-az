@@ -5,6 +5,22 @@ export interface Coordinates {
   lng: number;
 }
 
+// Carbon footprint estimation types
+export interface CarbonFootprintEstimate {
+  householdCarbonTonsPerYear: number;
+  householdCarbonKgPerMonth: number;
+  householdCarbonPoundsPerDay: number;
+  perCapitaCarbonTonsPerYear: number;
+  perCapitaCarbonKgPerMonth: number;
+  perCapitaCarbonPoundsPerDay: number;
+  equivalentCarMilesPerYear: number;
+  equivalentTreesNeeded: number;
+  equivalentGasolineGallons: number;
+  renewableImpactReduction: number;
+  nonRenewableEmissions: number;
+  renewableEmissions: number;
+}
+
 export interface County {
   name: string;
   consumption_mwh: number;
@@ -24,6 +40,9 @@ export interface County {
   currentRenewableGeneration?: number;
   gridStress?: 'High' | 'Moderate' | 'Low' | 'Normal';
   isRealTime?: boolean;
+
+  // Carbon footprint estimates
+  carbonFootprint?: CarbonFootprintEstimate;
 }
 
 export interface StateTotals {

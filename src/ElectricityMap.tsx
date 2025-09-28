@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { InvokeLLM } from '@/integrations/Core';
 import { useRealTimeData } from './services/RealTimeDataService';
+import { CarbonFootprintService } from './services/CarbonFootprintService';
 import { MapData, County, MapStyleType } from '@/types';
 import { 
   Zap, 
@@ -24,6 +25,7 @@ import 'leaflet/dist/leaflet.css';
 
 import MapLegend from './components/map/MapLegend';
 import CountyDetailsPanel from './components/map/CountyDetailsPanel';
+import CarbonFootprintCard from './components/map/CarbonFootprintCard';
 import StatsOverview from './components/map/StatsOverview';
 import MapControls from './components/map/MapControls';
 import DataSources from './components/DataSources';
@@ -78,6 +80,19 @@ export default function ElectricityMap() {
       setLastUpdated(new Date(realTimeData.timestamp).toLocaleString());
     }
   }, [realTimeData]);
+
+  // Helper function to enrich counties with carbon footprint estimates
+  const enrichCountiesWithCarbonFootprint = (counties: County[]): County[] => {
+    return counties.map(county => ({
+      ...county,
+      carbonFootprint: CarbonFootprintService.calculateCountyCarbonFootprint(
+        county.consumption_mwh,
+        county.population,
+        county.renewable_percentage,
+        county.carbon_emissions_tons
+      )
+    }));
+  };
 
   const getFallbackArizonaData = () => {
     return {
@@ -363,15 +378,23 @@ export default function ElectricityMap() {
       });
 
       if (!response.counties || response.counties.length === 0) {
-        setMapData(getFallbackArizonaData());
+        const fallbackData = getFallbackArizonaData();
+        fallbackData.counties = enrichCountiesWithCarbonFootprint(fallbackData.counties);
+        setMapData(fallbackData);
         setIsUsingFallback(true);
       } else {
-        setMapData(response);
+        const enrichedResponse = {
+          ...response,
+          counties: enrichCountiesWithCarbonFootprint(response.counties)
+        };
+        setMapData(enrichedResponse);
         setIsUsingFallback(false);
       }
     } catch (error) {
       console.error('Error loading electricity data:', error);
-      setMapData(getFallbackArizonaData());
+      const fallbackData = getFallbackArizonaData();
+      fallbackData.counties = enrichCountiesWithCarbonFootprint(fallbackData.counties);
+      setMapData(fallbackData);
       setIsUsingFallback(true);
     }
     setLoading(false);
@@ -488,11 +511,18 @@ export default function ElectricityMap() {
           />
         )}
 
-        <div className="grid lg:grid-cols-4 gap-6 mt-6">
-          <div className="lg:col-span-3">
-            <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur">
-              <CardContent className="p-0">
-                <div className="h-[600px] relative">
+        <div className="space-y-6 mt-6">
+          {/* Carbon Footprint Card - Horizontal Layout */}
+          {showPanel && selectedCounty && (
+            <CarbonFootprintCard county={selectedCounty} />
+          )}
+
+          {/* Map and Sidebar */}
+          <div className="grid lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <Card className="overflow-hidden shadow-xl border-0 bg-white/95 backdrop-blur">
+                <CardContent className="p-0">
+                  <div className="h-[600px] relative">
                   <MapContainer
                     center={[34.0489, -111.0937]}
                     zoom={7}
@@ -554,7 +584,7 @@ export default function ElectricityMap() {
 
           <div className="lg:col-span-1">
             {showPanel && selectedCounty ? (
-              <CountyDetailsPanel 
+              <CountyDetailsPanel
                 county={selectedCounty}
                 onClose={() => setShowPanel(false)}
               />
@@ -588,6 +618,7 @@ export default function ElectricityMap() {
                 </CardContent>
               </Card>
             )}
+          </div>
           </div>
         </div>
 

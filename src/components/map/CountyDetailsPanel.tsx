@@ -15,7 +15,11 @@ import {
   Factory,
   MapPin,
   Activity,
-  AlertTriangle
+  AlertTriangle,
+  Calculator,
+  Car,
+  TreePine,
+  Home
 } from 'lucide-react';
 import { CountyDetailsPanelProps } from '@/types';
 
@@ -208,6 +212,33 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
             </span>
           </div>
         </div>
+
+        {/* Carbon Footprint - Quick Summary */}
+        {county.carbonFootprint && (
+          <div className="bg-green-50 rounded-lg p-3">
+            <div className="flex items-center space-x-2 mb-2">
+              <Calculator className="w-4 h-4 text-green-600" />
+              <span className="text-sm font-medium text-green-900">Carbon Footprint Summary</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <span className="text-green-700">Per person:</span>
+                <div className="font-semibold text-green-900">
+                  {county.carbonFootprint.perCapitaCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
+                </div>
+              </div>
+              <div>
+                <span className="text-green-700">Per household:</span>
+                <div className="font-semibold text-green-900">
+                  {county.carbonFootprint.householdCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
+                </div>
+              </div>
+            </div>
+            <div className="text-xs text-green-800 mt-2">
+              💡 Detailed breakdown shown above
+            </div>
+          </div>
+        )}
 
         {/* Recommendations */}
         <div className="bg-blue-50 rounded-lg p-4">

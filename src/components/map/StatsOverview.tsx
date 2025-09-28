@@ -21,6 +21,10 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
     ? counties.reduce((acc, county) => acc + (county.sustainability_score || 0), 0) / counties.length
     : 0;
 
+  const avgCarbonFootprintPerCapita = counties?.length > 0
+    ? counties.reduce((acc, county) => acc + (county.carbonFootprint?.perCapitaCarbonTonsPerYear || 0), 0) / counties.length
+    : 0;
+
   const topRenewableCounty = counties?.length > 0
     ? counties.reduce((prev, current) => ((prev.renewable_percentage || 0) > (current.renewable_percentage || 0)) ? prev : current)
     : { name: '', renewable_percentage: 0, renewable_capacity_mw: 0 };
@@ -122,6 +126,10 @@ export default function StatsOverview({ data, counties }: StatsOverviewProps) {
               <div className="flex justify-between items-center">
                 <span className="text-sm text-slate-600">Counties</span>
                 <span className="font-semibold">{counties?.length || 0}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-600">Carbon Footprint per Person</span>
+                <span className="font-semibold">{avgCarbonFootprintPerCapita.toFixed(1)} tons CO₂/yr</span>
               </div>
             </div>
           </CardContent>

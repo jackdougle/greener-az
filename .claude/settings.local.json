@@ -3,7 +3,10 @@
     "allow": [
       "WebSearch",
       "Bash(npm run dev:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(find:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []
