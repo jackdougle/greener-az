@@ -26,6 +26,7 @@ import 'leaflet/dist/leaflet.css';
 import MapLegend from './components/map/MapLegend';
 import CountyDetailsPanel from './components/map/CountyDetailsPanel';
 import CarbonFootprintCard from './components/map/CarbonFootprintCard';
+import CarbonReductionModal from './components/CarbonReductionModal';
 import StatsOverview from './components/map/StatsOverview';
 import MapControls from './components/map/MapControls';
 import DataSources from './components/DataSources';
@@ -38,6 +39,7 @@ export default function ElectricityMap() {
   const [showPanel, setShowPanel] = useState<boolean>(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [isUsingFallback, setIsUsingFallback] = useState<boolean>(false);
+  const [showCarbonModal, setShowCarbonModal] = useState<boolean>(false);
   const { data: realTimeData, isConnected: isRealTimeConnected } = useRealTimeData();
 
   useEffect(() => {
@@ -514,7 +516,10 @@ export default function ElectricityMap() {
         <div className="space-y-6 mt-6">
           {/* Carbon Footprint Card - Horizontal Layout */}
           {showPanel && selectedCounty && (
-            <CarbonFootprintCard county={selectedCounty} />
+            <CarbonFootprintCard
+              county={selectedCounty}
+              onShowModal={() => setShowCarbonModal(true)}
+            />
           )}
 
           {/* Map and Sidebar */}
@@ -629,6 +634,15 @@ export default function ElectricityMap() {
           isUsingFallback={isUsingFallback}
         />
       </div>
+
+      {/* Carbon Reduction Modal - Full Page Overlay */}
+      {selectedCounty && (
+        <CarbonReductionModal
+          county={selectedCounty}
+          isOpen={showCarbonModal}
+          onClose={() => setShowCarbonModal(false)}
+        />
+      )}
     </div>
   );
 }

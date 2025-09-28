@@ -1,20 +1,24 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Calculator,
   Car,
   TreePine,
   Fuel,
-  Leaf
+  Leaf,
+  ExternalLink
 } from 'lucide-react';
 import { County } from '@/types';
 
 interface CarbonFootprintCardProps {
   county: County;
+  onShowModal: () => void;
 }
 
-export default function CarbonFootprintCard({ county }: CarbonFootprintCardProps) {
+export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootprintCardProps) {
+
   const formatNumber = (num: number): string => {
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     if (num >= 100) return num.toFixed(0);
@@ -119,13 +123,20 @@ export default function CarbonFootprintCard({ county }: CarbonFootprintCardProps
           {/* Column 4: Action Items */}
           <div className="bg-blue-50 rounded-lg p-3">
             <h4 className="font-semibold text-blue-900 mb-2 text-sm">Reduce Your Impact</h4>
-            <ul className="text-xs text-blue-800 space-y-0.5">
-              <li>• Install solar panels</li>
-              <li>• Switch to electric vehicle</li>
-              <li>• Upgrade appliances</li>
-              <li>• Improve insulation</li>
-              <li>• Choose renewable plans</li>
+            <ul className="text-xs text-blue-800 space-y-0.5 mb-3">
+              <li>• AZ Solar Tax Credit (25%)</li>
+              <li>• Utility rebate programs</li>
+              <li>• Energy efficiency audits</li>
+              <li>• Seasonal optimization tips</li>
             </ul>
+            <Button
+              size="sm"
+              onClick={onShowModal}
+              className="w-full text-xs py-1 h-7"
+            >
+              <ExternalLink className="w-3 h-3 mr-1" />
+              Get Specific Programs & Tips
+            </Button>
           </div>
 
         </div>
@@ -137,6 +148,7 @@ export default function CarbonFootprintCard({ county }: CarbonFootprintCardProps
           </p>
         </div>
       </CardContent>
+
     </Card>
   );
 }
