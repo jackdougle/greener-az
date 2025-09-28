@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CardHeader, CardTitle, CardContent, Card } from './ui/card';
-import { Clock, TrendingUp, Calendar } from 'lucide-react';
+import { Clock, TrendingUp, Calendar, Loader2 } from 'lucide-react';
 import { County } from '@/types';
+import { historicalDataService, HistoricalData } from '@/services/HistoricalDataService';
 
 interface TimeDataProps {
   selectedCounty: County | null;
@@ -14,51 +15,33 @@ interface HistoricalDataPoint {
 }
 
 export default function TimeData({ selectedCounty }: TimeDataProps) {
-  // Generate mock historical data for the selected county
-  const generateHistoricalData = (county: County | null): {
-    monthlyData: HistoricalDataPoint[];
-    yearlyData: HistoricalDataPoint[];
-  } => {
-    if (!county) {
-      return { monthlyData: [], yearlyData: [] };
-    }
+  const [historicalData, setHistoricalData] = useState<HistoricalData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const now = new Date();
-    
-    // Generate 12 months of data
-    const monthlyData: HistoricalDataPoint[] = [];
-    for (let i = 11; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const baseConsumption = county.consumption_mwh / 12; // Monthly average
-      const seasonalVariation = 1 + 0.3 * Math.sin((date.getMonth() / 12) * Math.PI * 2); // Seasonal variation
-      const randomVariation = 0.8 + Math.random() * 0.4; // ±20% random variation
+  // Fetch historical data when county changes
+  useEffect(() => {
+    if (selectedCounty) {
+      setLoading(true);
+      setError(null);
       
-      monthlyData.push({
-        date: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        consumption_mwh: Math.round(baseConsumption * seasonalVariation * randomVariation),
-        renewable_percentage: Math.min(50, county.renewable_percentage + (Math.random() - 0.5) * 10)
-      });
+      historicalDataService.getCountyHistoricalData(selectedCounty.name)
+        .then((data) => {
+          setHistoricalData(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error fetching historical data:', err);
+          setError('Failed to load historical data');
+          setLoading(false);
+        });
+    } else {
+      setHistoricalData(null);
     }
+  }, [selectedCounty]);
 
-    // Generate 10 years of data
-    const yearlyData: HistoricalDataPoint[] = [];
-    for (let i = 9; i >= 0; i--) {
-      const year = now.getFullYear() - i;
-      const baseConsumption = county.consumption_mwh;
-      const growthFactor = Math.pow(1.02, i); // 2% annual growth
-      const randomVariation = 0.9 + Math.random() * 0.2; // ±10% random variation
-      
-      yearlyData.push({
-        date: year.toString(),
-        consumption_mwh: Math.round(baseConsumption * growthFactor * randomVariation),
-        renewable_percentage: Math.min(50, county.renewable_percentage + (Math.random() - 0.5) * 15 + (9 - i) * 1.5) // Gradual increase
-      });
-    }
-
-    return { monthlyData, yearlyData };
-  };
-
-  const { monthlyData, yearlyData } = generateHistoricalData(selectedCounty);
+  const monthlyData = historicalData?.monthlyData || [];
+  const yearlyData = historicalData?.yearlyData || [];
 
   const formatNumber = (num: number): string => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -235,7 +218,7 @@ export default function TimeData({ selectedCounty }: TimeDataProps) {
       <Card className="mt-6 shadow-lg bg-card backdrop-blur border border-border">
         <CardHeader>
           <CardTitle className="text-lg flex items-center space-x-2">
-            <Clock className="w-5 h-5 text-blue-600" />
+            <Clock className="w-5 h-5 text-primary" />
             <span>Energy Usage Over Time</span>
           </CardTitle>
         </CardHeader>
@@ -249,12 +232,54 @@ export default function TimeData({ selectedCounty }: TimeDataProps) {
     );
   }
 
+  if (loading) {
+    return (
+      <Card className="mt-6 shadow-lg bg-card backdrop-blur border border-border">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center space-x-2">
+            <Clock className="w-5 h-5 text-primary" />
+            <span>Energy Usage Over Time - {selectedCounty?.name} County</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center space-x-3">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <span className="text-foreground/70">Loading historical data...</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="mt-6 shadow-lg bg-card backdrop-blur border border-border">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center space-x-2">
+            <Clock className="w-5 h-5 text-primary" />
+            <span>Energy Usage Over Time - {selectedCounty?.name} County</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="text-foreground/60 mb-2">⚠️ {error}</div>
+              <div className="text-sm text-foreground/50">Using fallback data</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="mt-6 shadow-lg bg-card backdrop-blur border border-border">
       <CardHeader>
         <CardTitle className="text-lg flex items-center space-x-2">
-          <Clock className="w-5 h-5 text-blue-600" />
-          <span>Energy Usage Over Time - {selectedCounty.name} County</span>
+          <Clock className="w-5 h-5 text-primary" />
+          <span>Energy Usage Over Time - {selectedCounty?.name} County</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -296,7 +321,7 @@ export default function TimeData({ selectedCounty }: TimeDataProps) {
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-border">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-primary">
               {formatNumber(monthlyData[monthlyData.length - 1]?.consumption_mwh || 0)}
             </div>
             <div className="text-sm text-foreground/70">Current Month</div>
@@ -321,6 +346,6 @@ export default function TimeData({ selectedCounty }: TimeDataProps) {
           </div>
         </div>
       </CardContent>
-    </Card>
+    </Card>  
   );
 }

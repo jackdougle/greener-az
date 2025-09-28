@@ -50,7 +50,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
           {/* Column 1: Key Metrics */}
-          <div className="bg-muted rounded-lg p-3">
+          <div className="rounded-lg p-3" style={{ backgroundColor: 'hsl(var(--reduce-impact-bg))', border: '1px solid hsl(var(--opportunities-border))' }}>
             <h4 className="font-semibold text-foreground mb-2 text-sm">Annual Emissions</h4>
             <div className="space-y-1">
               <div className="text-center">
@@ -69,7 +69,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
           </div>
 
           {/* Column 2: What This Means */}
-          <div className="bg-muted rounded-lg p-3">
+          <div className="rounded-lg p-3" style={{ backgroundColor: 'hsl(var(--reduce-impact-bg))', border: '1px solid hsl(var(--opportunities-border))' }}>
             <h4 className="font-semibold text-foreground mb-2 text-sm">Per Person Equivalent</h4>
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
@@ -97,7 +97,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
           </div>
 
           {/* Column 3: Renewable Impact */}
-          <div className="rounded-lg p-3" style={{ backgroundColor: 'hsl(var(--clean-energy-bg))', border: '1px solid hsl(var(--clean-energy-border))' }}>
+          <div className="rounded-lg p-3" style={{ backgroundColor: 'hsl(var(--reduce-impact-bg))', border: '1px solid hsl(var(--opportunities-border))' }}>
             <h4 className="font-semibold text-foreground mb-2 text-sm">Clean Energy Impact</h4>
             <div className="space-y-1">
               <div className="flex items-center justify-between">
@@ -121,7 +121,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
           </div>
 
           {/* Column 4: Action Items */}
-          <div className="rounded-lg p-3" style={{ backgroundColor: 'hsl(var(--reduce-impact-bg))', border: '1px solid hsl(var(--reduce-impact-border))' }}>
+          <div className="rounded-lg p-3" style={{ backgroundColor: 'hsl(var(--reduce-impact-bg))', border: '1px solid hsl(var(--opportunities-border))' }}>
             <h4 className="font-semibold text-foreground mb-2 text-sm">Reduce Your Impact</h4>
             <ul className="text-xs text-foreground/80 space-y-0.5 mb-3">
               <li>• AZ Solar Tax Credit (25%)</li>
@@ -132,7 +132,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
             <Button
               size="sm"
               onClick={onShowModal}
-              className="w-full text-xs py-1 h-7"
+              className="w-full text-xs py-1 h-7 bg-popover text-card-foreground"
             >
               <ExternalLink className="w-3 h-3 mr-1" />
               Get Specific Programs & Tips

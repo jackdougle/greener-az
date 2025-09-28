@@ -94,7 +94,11 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
                   }
                 </p>
                 {county.isRealTime && (
-                  <p className="text-xs text-green-600 pulse-soft">Live data</p>
+                  <div className="flex flex-row">
+                    <AlertTriangle className="h-3 w-3 mr-1 translate-y-0.5 text-green-600"/>
+                    <p className="text-xs text-green-600 pulse-soft">Live data</p>
+                  </div>
+                  
                 )}
               </div>
               <div className="transition-smooth hover:bg-amber-50 -mx-2 px-2 py-2 rounded-lg">
@@ -108,7 +112,7 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
           <div className="space-y-3 fade-in-up stagger-2">
             <h4 className="font-semibold text-foreground text-sm">Sustainability & Energy</h4>
             <div className="space-y-2">
-              <div className="transition-smooth hover:bg-emerald-50 -mx-2 px-2 py-2 rounded-lg">
+              <div className="transition-smooth hover:bg-emerald-50 -mx-2 px-2 py-2 rounded-lg pr-8">
                 <p className="text-xs font-medium text-foreground/70 uppercase tracking-wide">Sustainability Score</p>
                 <div className="flex items-center space-x-2 mt-1">
                   <div className="flex-1 bg-slate-200 rounded-full h-2 hover-glow transition-smooth">
@@ -184,27 +188,9 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
             <h4 className="font-semibold text-foreground text-sm">Status & Actions</h4>
             <div className="space-y-2">
 
-              {/* Grid Status - Real-time only */}
-              {county.isRealTime && county.gridStress && (
-                <div className="transition-smooth hover:bg-muted -mx-2 px-2 py-2 rounded-lg fade-in">
-                  <p className="text-xs font-medium text-foreground/70 uppercase tracking-wide">Grid Status</p>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <AlertTriangle className="w-3 h-3 text-foreground/60" />
-                    <Badge className={`${getGridStressColor(county.gridStress)} text-xs transition-bounce hover-scale`}>
-                      {county.gridStress} Demand
-                    </Badge>
-                  </div>
-                  {county.currentRenewableGeneration && (
-                    <p className="text-xs text-foreground/80 mt-1 pulse-soft">
-                      {formatNumber(county.currentRenewableGeneration)} MW renewable
-                    </p>
-                  )}
-                </div>
-              )}
-
               {/* Carbon Footprint Summary */}
               {county.carbonFootprint && (
-                <div className="bg-green-50 rounded-lg p-2 hover-lift transition-smooth fade-in stagger-1">
+                <div className="rounded-lg p-2 transition-smooth fade-in stagger-1" style={{ backgroundColor: 'hsl(var(--opportunities-bg))', border: '1px solid hsl(var(--opportunities-border))' }}>
                   <div className="flex items-center space-x-1 mb-1">
                     <Calculator className="w-3 h-3 text-green-600 hover-scale transition-bounce" />
                     <span className="text-xs font-medium text-foreground">Carbon Footprint</span>
@@ -229,7 +215,10 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
 
               {/* Quick Recommendations */}
               <div className="rounded-lg p-2" style={{ backgroundColor: 'hsl(var(--opportunities-bg))', border: '1px solid hsl(var(--opportunities-border))' }}>
-                <h5 className="text-xs font-semibold text-foreground mb-1">Opportunities</h5>
+                <div className="flex items-center space-x-1 mb-1">
+                  <Zap className="w-3 h-3 text-green-600 hover-scale transition-bounce -translate-y-0.5" />
+                  <h5 className="text-xs font-semibold text-foreground mb-1">Opportunities</h5>
+                </div>
                 <ul className="text-xs text-foreground/80 space-y-0.5">
                   {county.renewable_percentage < 30 && (
                     <li className="transition-smooth hover:bg-muted -mx-1 px-1 py-0.5 rounded">• Increase solar capacity</li>
