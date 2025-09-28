@@ -38,12 +38,12 @@ export default function CarbonFootprintPanel({
   };
 
   return (
-    <Card className="border-0 shadow-lg bg-card backdrop-blur">
+    <Card className="border-0 shadow-lg bg-card backdrop-blur fade-in-scale hover-lift transition-smooth">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center space-x-2">
           <Calculator className="w-5 h-5 text-green-600" />
           <span>Carbon Footprint Estimator</span>
-          <Badge variant="outline" className="text-xs">
+          <Badge variant="outline" className="text-xs hover-scale transition-smooth">
             {countyName}
           </Badge>
         </CardTitle>
@@ -116,7 +116,7 @@ export default function CarbonFootprintPanel({
             <span>Equivalent Impact (Per Person/Year)</span>
           </h4>
           <div className="grid grid-cols-1 gap-3">
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover-lift transition-smooth stagger-1">
               <div className="flex items-center space-x-2">
                 <Car className="w-4 h-4 text-blue-600" />
                 <span className="text-sm text-foreground/80">Driving miles</span>
@@ -125,7 +125,7 @@ export default function CarbonFootprintPanel({
                 {formatNumber(estimate.equivalentCarMilesPerYear)} miles
               </span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover-lift transition-smooth stagger-2">
               <div className="flex items-center space-x-2">
                 <TreePine className="w-4 h-4 text-green-600" />
                 <span className="text-sm text-foreground/80">Trees needed to offset</span>
@@ -134,7 +134,7 @@ export default function CarbonFootprintPanel({
                 {formatNumber(estimate.equivalentTreesNeeded)} trees
               </span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover-lift transition-smooth stagger-3">
               <div className="flex items-center space-x-2">
                 <Fuel className="w-4 h-4 text-orange-600" />
                 <span className="text-sm text-foreground/80">Gasoline burned</span>

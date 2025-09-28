@@ -37,7 +37,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
   const { carbonFootprint } = county;
 
   return (
-    <Card className="border-0 shadow-lg bg-card backdrop-blur">
+    <Card className="border-0 shadow-lg bg-card backdrop-blur fade-in-up hover-lift transition-smooth">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center space-x-2 text-lg">
           <Calculator className="w-5 h-5 text-green-600" />
@@ -132,7 +132,7 @@ export default function CarbonFootprintCard({ county, onShowModal }: CarbonFootp
             <Button
               size="sm"
               onClick={onShowModal}
-              className="w-full text-xs py-1 h-7 bg-popover text-card-foreground"
+              className="w-full text-xs py-1 h-7 bg-popover text-card-foreground hover-scale transition-smooth"
             >
               <ExternalLink className="w-3 h-3 mr-1" />
               Get Specific Programs & Tips
