@@ -71,190 +71,181 @@ export default function CountyDetailsPanel({ county, onClose }: CountyDetailsPan
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-6">
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              Population
-            </p>
-            <p className="text-lg font-bold text-slate-900">
-              {formatNumber(county.population)}
-            </p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              {county.isRealTime ? 'Current Usage' : 'Annual Consumption'}
-            </p>
-            <p className="text-lg font-bold text-slate-900">
-              {county.isRealTime && county.currentConsumption
-                ? formatNumber(county.currentConsumption) + ' MWh/yr'
-                : formatNumber(county.consumption_mwh) + ' MWh'
-              }
-            </p>
-            {county.isRealTime && (
-              <p className="text-xs text-green-600">Live data</p>
-            )}
-          </div>
-        </div>
+      <CardContent className="p-4">
+        {/* Horizontal Layout - All content in columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
-        {/* Sustainability Score */}
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-            Sustainability Score
-          </p>
-          <div className="flex items-center space-x-3">
-            <div className="flex-1 bg-slate-200 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full"
-                style={{ width: `${county.sustainability_score}%` }}
-              />
+          {/* Column 1: Key Metrics */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-slate-900 text-sm">Key Metrics</h4>
+            <div className="space-y-2">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Population</p>
+                <p className="text-lg font-bold text-slate-900">{formatNumber(county.population)}</p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                  {county.isRealTime ? 'Current Usage' : 'Annual Consumption'}
+                </p>
+                <p className="text-lg font-bold text-slate-900">
+                  {county.isRealTime && county.currentConsumption
+                    ? formatNumber(county.currentConsumption) + ' MWh/yr'
+                    : formatNumber(county.consumption_mwh) + ' MWh'
+                  }
+                </p>
+                {county.isRealTime && (
+                  <p className="text-xs text-green-600">Live data</p>
+                )}
+              </div>
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Per Capita Usage</p>
+                <p className="text-lg font-bold text-slate-900">{(county.consumption_per_capita || 0).toFixed(1)} MWh</p>
+              </div>
             </div>
-            <Badge className={getSustainabilityColor(county.sustainability_score)}>
-              {county.sustainability_score}/100
-            </Badge>
           </div>
-        </div>
 
-        {/* Renewable Energy */}
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-            Renewable Energy
-          </p>
-          <div className="flex items-center space-x-2">
-            <Leaf className="w-4 h-4 text-green-600" />
-            <span className="text-lg font-semibold text-slate-900">
-              {county.renewable_percentage}%
-            </span>
-            <span className="text-sm text-slate-600">
-              ({formatNumber(county.renewable_capacity_mw)} MW capacity)
-            </span>
-          </div>
-        </div>
-
-        {/* Major Cities */}
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-            Major Cities
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {county.major_cities?.slice(0, 3).map((city, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {city}
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        {/* Energy Sources */}
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-            Primary Energy Sources
-          </p>
-          <div className="space-y-1">
-            {county.primary_sources?.slice(0, 3).map((source, index) => {
-              const icons: Record<string, React.ComponentType<{ className?: string }>> = {
-                'Solar': Sun,
-                'Wind': Wind,
-                'Natural Gas': Factory,
-                'Coal': Factory
-              };
-              const Icon = icons[source] || Factory;
-              
-              return (
-                <div key={index} className="flex items-center space-x-2 text-sm">
-                  <Icon className="w-4 h-4 text-slate-600" />
-                  <span>{source}</span>
+          {/* Column 2: Sustainability & Energy */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-slate-900 text-sm">Sustainability & Energy</h4>
+            <div className="space-y-2">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Sustainability Score</p>
+                <div className="flex items-center space-x-2 mt-1">
+                  <div className="flex-1 bg-slate-200 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full"
+                      style={{ width: `${county.sustainability_score}%` }}
+                    />
+                  </div>
+                  <Badge className={`${getSustainabilityColor(county.sustainability_score)} text-xs`}>
+                    {county.sustainability_score}/100
+                  </Badge>
                 </div>
-              );
-            })}
+              </div>
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Renewable Energy</p>
+                <div className="flex items-center space-x-2 mt-1">
+                  <Leaf className="w-4 h-4 text-green-600" />
+                  <span className="text-lg font-semibold text-slate-900">{county.renewable_percentage}%</span>
+                </div>
+                <p className="text-xs text-slate-600">({formatNumber(county.renewable_capacity_mw)} MW capacity)</p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Avg. Residential Rate</p>
+                <p className="text-lg font-bold text-slate-900">{county.avg_residential_rate}¢/kWh</p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Grid Status - Real-time only */}
-        {county.isRealTime && county.gridStress && (
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-              Grid Status
-            </p>
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="w-4 h-4 text-slate-600" />
-              <Badge className={getGridStressColor(county.gridStress)}>
-                {county.gridStress} Demand
-              </Badge>
-              {county.currentRenewableGeneration && (
-                <span className="text-sm text-slate-600">
-                  ({formatNumber(county.currentRenewableGeneration)} MW renewable)
-                </span>
+          {/* Column 3: Cities & Sources */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-slate-900 text-sm">Cities & Sources</h4>
+            <div className="space-y-2">
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Major Cities</p>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {county.major_cities?.slice(0, 3).map((city, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {city}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Primary Energy Sources</p>
+                <div className="space-y-1 mt-1">
+                  {county.primary_sources?.slice(0, 3).map((source, index) => {
+                    const icons: Record<string, React.ComponentType<{ className?: string }>> = {
+                      'Solar': Sun,
+                      'Wind': Wind,
+                      'Natural Gas': Factory,
+                      'Coal': Factory
+                    };
+                    const Icon = icons[source] || Factory;
+
+                    return (
+                      <div key={index} className="flex items-center space-x-2 text-xs">
+                        <Icon className="w-3 h-3 text-slate-600" />
+                        <span>{source}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Carbon Emissions</p>
+                <p className="text-lg font-bold text-slate-900">{formatNumber(county.carbon_emissions_tons)} tons CO₂</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 4: Status & Actions */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-slate-900 text-sm">Status & Actions</h4>
+            <div className="space-y-2">
+
+              {/* Grid Status - Real-time only */}
+              {county.isRealTime && county.gridStress && (
+                <div>
+                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Grid Status</p>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <AlertTriangle className="w-3 h-3 text-slate-600" />
+                    <Badge className={`${getGridStressColor(county.gridStress)} text-xs`}>
+                      {county.gridStress} Demand
+                    </Badge>
+                  </div>
+                  {county.currentRenewableGeneration && (
+                    <p className="text-xs text-slate-600 mt-1">
+                      {formatNumber(county.currentRenewableGeneration)} MW renewable
+                    </p>
+                  )}
+                </div>
               )}
-            </div>
-          </div>
-        )}
 
-        {/* Per Capita Usage */}
-        <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-slate-700">Per Capita Usage</span>
-            <span className="text-lg font-bold text-slate-900">
-              {(county.consumption_per_capita || 0).toFixed(1)} MWh
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-slate-700">Avg. Residential Rate</span>
-            <span className="text-lg font-bold text-slate-900">
-              {county.avg_residential_rate}¢/kWh
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-slate-700">Carbon Emissions</span>
-            <span className="text-lg font-bold text-slate-900">
-              {formatNumber(county.carbon_emissions_tons)} tons CO₂
-            </span>
-          </div>
-        </div>
+              {/* Carbon Footprint Summary */}
+              {county.carbonFootprint && (
+                <div className="bg-green-50 rounded-lg p-2">
+                  <div className="flex items-center space-x-1 mb-1">
+                    <Calculator className="w-3 h-3 text-green-600" />
+                    <span className="text-xs font-medium text-green-900">Carbon Footprint</span>
+                  </div>
+                  <div className="text-xs space-y-1">
+                    <div>
+                      <span className="text-green-700">Per person:</span>
+                      <span className="font-semibold text-green-900 ml-1">
+                        {county.carbonFootprint.perCapitaCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-green-700">Per household:</span>
+                      <span className="font-semibold text-green-900 ml-1">
+                        {county.carbonFootprint.householdCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
+                      </span>
+                    </div>
+                    <div className="text-xs text-green-800 mt-1">💡 See detailed breakdown above</div>
+                  </div>
+                </div>
+              )}
 
-        {/* Carbon Footprint - Quick Summary */}
-        {county.carbonFootprint && (
-          <div className="bg-green-50 rounded-lg p-3">
-            <div className="flex items-center space-x-2 mb-2">
-              <Calculator className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-green-900">Carbon Footprint Summary</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <span className="text-green-700">Per person:</span>
-                <div className="font-semibold text-green-900">
-                  {county.carbonFootprint.perCapitaCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
-                </div>
-              </div>
-              <div>
-                <span className="text-green-700">Per household:</span>
-                <div className="font-semibold text-green-900">
-                  {county.carbonFootprint.householdCarbonTonsPerYear.toFixed(1)} tons CO₂/yr
-                </div>
+              {/* Quick Recommendations */}
+              <div className="bg-blue-50 rounded-lg p-2">
+                <h5 className="text-xs font-semibold text-blue-900 mb-1">Opportunities</h5>
+                <ul className="text-xs text-blue-800 space-y-0.5">
+                  {county.renewable_percentage < 30 && (
+                    <li>• Increase solar capacity</li>
+                  )}
+                  {county.consumption_per_capita > 15 && (
+                    <li>• Energy efficiency programs</li>
+                  )}
+                  {county.carbon_emissions_tons > 1000000 && (
+                    <li>• Transition to renewables</li>
+                  )}
+                  <li>• Expand solar incentives</li>
+                </ul>
               </div>
             </div>
-            <div className="text-xs text-green-800 mt-2">
-              💡 Detailed breakdown shown above
-            </div>
           </div>
-        )}
 
-        {/* Recommendations */}
-        <div className="bg-blue-50 rounded-lg p-4">
-          <h4 className="font-semibold text-blue-900 mb-2">Sustainability Opportunities</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            {county.renewable_percentage < 30 && (
-              <li>• Increase solar capacity deployment</li>
-            )}
-            {county.consumption_per_capita > 15 && (
-              <li>• Implement energy efficiency programs</li>
-            )}
-            {county.carbon_emissions_tons > 1000000 && (
-              <li>• Transition from coal to renewable sources</li>
-            )}
-            <li>• Expand residential solar incentives</li>
-          </ul>
         </div>
       </CardContent>
     </Card>
