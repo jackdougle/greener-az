@@ -1,4 +1,4 @@
-# Arizona Energy Map 🌵⚡
+# GreenerArizona 🌵⚡
 
 An interactive resource visualizing electricity usage across counties in Arizona to support decisions for renewable energy integration and indvidual energy usage decisions.
 Provides list of government initiatives incentivizing switch to renewable energy in exchange for tax credits and other benefits.
@@ -51,7 +51,3 @@ This application provides stakeholders, policymakers, and citizens with an intui
 - **U.S. Census Bureau** - 2024 population estimates
 - **Arizona Department of Environmental Quality** - 2024 emissions data
 - **DOE Loan Programs Office** - APS clean energy financing data
-
----
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
