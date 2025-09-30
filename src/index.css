@@ -12,6 +12,9 @@
     --cactina-gradient: linear-gradient(135deg, hsl(var(--cactina-1)) 20%, hsl(var(--cactina-2)) 100%);
     --cactina-1: 327 88 90;
     --cactina-2: 142 76% 75%;
+    --cactina-light-gradient: linear-gradient(135deg, hsl(var(--cactina-light-1)) 20%, hsl(var(--cactina-light-2)) 100%);
+    --cactina-light-1: 327 88% 97%;
+    --cactina-light-2: 142 76% 95%;
     --foreground: 210 40% 8%;
     --card: 130 80% 80%;
     --card-foreground: 210 40% 8%;
@@ -47,6 +50,9 @@
     --cactina-gradient: linear-gradient(135deg, hsl(var(--cactina-1)) 20%, hsl(var(--cactina-2)) 100%);
     --cactina-1: 109 100% 8%;
     --cactina-2: 340 100% 21%;
+    --cactina-light-gradient: linear-gradient(135deg, hsl(var(--cactina-light-1)) 20%, hsl(var(--cactina-light-2)) 100%);
+    --cactina-light-1: 109 100% 13%;
+    --cactina-light-2: 340 100% 30%;
     --card-foreground: 210 40% 98%;
   --popover: 340 100% 11%;
     --popover-foreground: 210 40% 98%;
