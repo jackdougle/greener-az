@@ -1,4 +1,4 @@
-# Greener Arizona 🌵⚡
+# 🌵 Greener Arizona ⚡
 
 [(https://sunhacks-2025-8avb.vercel.app/]
 
