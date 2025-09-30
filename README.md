@@ -3,7 +3,7 @@
 ![Vite](https://img.shields.io/badge/Vite-4.4.5-purple)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.3.3-teal)
 
-# ⚡️🌵 Greener AZ
+# ⚡️ GreenerArizona 🌵
 
 An interactive resource visualizing electricity usage across counties in Arizona to support decisions for renewable energy integration and indvidual energy usage decisions.
 Provides list of government initiatives incentivizing switch to renewable energy in exchange for tax credits and other benefits.
