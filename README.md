@@ -52,4 +52,4 @@ This application provides stakeholders, policymakers, and citizens with an intui
 - **Arizona Department of Environmental Quality** - 2024 emissions data
 - **DOE Loan Programs Office** - APS clean energy financing data
 ---
-Built during Sunhacks 2025
+**_Built during Sunhacks 2025_**
