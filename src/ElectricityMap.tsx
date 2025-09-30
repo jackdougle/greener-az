@@ -32,7 +32,6 @@ import StatsOverview from './components/map/StatsOverview';
 import MapControls from './components/map/MapControls';
 import DataSources from './components/DataSources';
 import TimeData from './components/TimeData';
-import ApiConfigurationNotice from './components/ApiConfigurationNotice';
 import { realTimeDataService } from './services/RealTimeDataService';
 
 export default function ElectricityMap() {
@@ -509,10 +508,6 @@ export default function ElectricityMap() {
       <div className="max-w-7xl mx-auto p-6 pt-24">
         {/* API Configuration Notice */}
         <div className="mb-6 fade-in">
-          <ApiConfigurationNotice
-            isApiConfigured={dataSourceInfo.isApiConfigured}
-            isUsingRealApi={dataSourceInfo.isUsingRealApi}
-          />
         </div>
 
         {mapData && (
