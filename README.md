@@ -1,4 +1,4 @@
-# GreenerArizona 🌵⚡
+# (Greener Arizona)[(https://sunhacks-2025-8avb.vercel.app/] 🌵⚡
 
 An interactive resource visualizing electricity usage across counties in Arizona to support decisions for renewable energy integration and indvidual energy usage decisions.
 Provides list of government initiatives incentivizing switch to renewable energy in exchange for tax credits and other benefits.
