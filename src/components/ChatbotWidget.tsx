@@ -106,8 +106,8 @@ export default function ChatbotWidget() {
       <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setOpen((s) => !s)}
-          className="w-32 h-32 md:w-36 md:h-36 rounded-full shadow-2xl bg-gradient-to-br from-pink-100 to-green-100 flex items-center justify-center hover-lift hover-glow transition-smooth border-2 border-pink-200 fade-in-scale"
-          aria-label="Open chatbot"
+          className="w-32 h-32 md:w-36 md:h-36 rounded-full shadow-2xl bg-gradient-to-br flex items-center justify-center hover-lift hover-glow transition-smooth border-2 border-pink-200 dark:border-pink-800 fade-in-scale"
+          aria-label="Open chatbot" style={{ background: 'var(--cactina-gradient)' }}
         >
           <img src="/assets/char.gif" alt="assistant" className="w-28 h-28 md:w-32 md:h-32" />
         </button>

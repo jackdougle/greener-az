@@ -464,7 +464,7 @@ export default function ElectricityMap() {
                 <Zap className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Arizona Energy Map</h1>
+                <h1 className="text-2xl font-bold text-foreground">Greener Arizona ♻️</h1>
                 <p className="text-sm text-foreground/80">Interactive electricity usage & sustainability insights</p>
               </div>
             </div>
@@ -477,7 +477,7 @@ export default function ElectricityMap() {
                     <Wifi className="w-4 h-4 text-green-600 transition-smooth" />
                     <div className="flex items-center space-x-1">
                       <div className="w-2 h-2 bg-green-500 rounded-full pulse-soft"></div>
-                      <span className="text-sm text-green-600 dark:text-green-400 font-medium">Live</span>
+                      <span className="text-sm text-green-600 dark:text-green-300 font-medium">Live</span>
                     </div>
                   </>
                 ) : isUsingFallback ? (

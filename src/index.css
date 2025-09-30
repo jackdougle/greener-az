@@ -7,11 +7,13 @@
     /* light theme background: soft light green */
     --background: 140 60% 78%;
     --pink-bg: 327 88 81;
-    /* Global background gradient uses the --background and --card tokens */
+    --green-bg: 142 76% 60%;
     --background-gradient: linear-gradient(135deg, hsl(var(--pink-bg)) 20%, hsl(var(--green-bg)) 100%);
+    --cactina-gradient: linear-gradient(135deg, hsl(var(--cactina-1)) 20%, hsl(var(--cactina-2)) 100%);
+    --cactina-1: 327 88 90;
+    --cactina-2: 142 76% 75%;
     --foreground: 210 40% 8%;
     --card: 130 80% 80%;
-    --green-bg: 142 76% 60%; /* light pink cards in light mode */
     --card-foreground: 210 40% 8%;
     --popover: 128 80% 70%;
     --popover-foreground: 210 40% 8%;
@@ -42,6 +44,9 @@
   --background: 340 100% 11%; /* dark gray */
   /* gradient from slightly darker card to background */
   --background-gradient: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+    --cactina-gradient: linear-gradient(135deg, hsl(var(--cactina-1)) 20%, hsl(var(--cactina-2)) 100%);
+    --cactina-1: 109 100% 8%;
+    --cactina-2: 340 100% 21%;
     --card-foreground: 210 40% 98%;
   --popover: 340 100% 11%;
     --popover-foreground: 210 40% 98%;
