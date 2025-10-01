@@ -35,12 +35,12 @@ This application provides stakeholders, policymakers, and citizens with an intui
 ## Frameworks
 
 - **Frontend**: React 18 with Vite and TypeScript
-- **Type Safety**: Full TypeScript implementation with strict typing
 - **Mapping**: React-Leaflet with OpenStreetMap tiles
 - **Styling**: Tailwind CSS with custom design system
 - **Icons**: Lucide React
-- **UI Components**: Custom shadcn/ui-inspired components
-- **Real-time Services**: Custom TypeScript service architecture
+- **Live Data**: Custom TypeScript service architecture with EIA API
+
+**Largely scaffolded with Claude + Copilot**
 
 ## Sources
 
